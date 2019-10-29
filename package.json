@@ -1,9 +1,9 @@
 {
   "name": "vue-event-bulletin",
   "version": "1.0.0",
-  "description": "Demo application for the scotch.io tutorial",
+  "description": "EasyCube - A tutorial helping human to learn rubik's cube",
   "main": "server.js",
-  "author": "Ryan Chenkie, Jason Lam",
+  "author": "Tianjyan",
   "license": "MIT",
   "dependencies": {
     "bootstrap": "^3.3.6",
@@ -12,7 +12,9 @@
     "morgan": "^1.6.1",
     "vue": "^1.0.10",
     "vue-resource": "^0.1.17",
-    "requirejs": "2.3.6"
+    "requirejs": "2.3.6",
+    "requirejs-vue": "1.1.5",
+    "jquery": "3.1.1"
   },
   "devDependencies": {
     "body-parser": "^1.14.1",
