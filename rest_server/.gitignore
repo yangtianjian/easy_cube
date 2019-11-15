@@ -1,1 +1,4 @@
-/colordetect/video/
+/colordetect/video/*
+/colordetect/clipped_color_blocks/*
+/colordetect/clipped_video_frames/*
+/colordetect/video_frames/*
