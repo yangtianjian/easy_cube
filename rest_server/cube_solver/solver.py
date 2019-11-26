@@ -156,7 +156,45 @@ class Cube(object):
     def copy(self):
         return self.__copy__()
 
-    def rotate(self, face, clockwise=None):
+    def _rotate_xy_middle(self):
+        '''
+        Rotate the 8 cubes of the center which is on xy-plane. This is only used for rotate the whole cube conveniently.
+        :return: None
+        '''
+        f_idx, r_idx, b_idx, l_idx = [self._face_map[f] for f in ['F', 'R', 'B', 'L']]
+        v = self._c.reshape(6, 9)
+        tmp = v[f_idx, [3, 4, 5]].copy()
+        v[f_idx, [3, 4, 5]] = v[r_idx, [3, 4, 5]]
+        v[r_idx, [3, 4, 5]] = v[b_idx, [3, 4, 5]]
+        v[b_idx, [3, 4, 5]] = v[l_idx, [3, 4, 5]]
+        v[l_idx, [3, 4, 5]] = tmp
+
+    def _rotate_yz_middle(self):
+        f_idx, d_idx, b_idx, u_idx = [self._face_map[f] for f in ['F', 'D', 'B', 'U']]
+        v = self._c.reshape(6, 9)
+        tmp = v[f_idx, [1, 4, 7]].copy()
+        v[f_idx, [1, 4, 7]] = v[u_idx, [1, 4, 7]]
+        v[u_idx, [1, 4, 7]] = v[b_idx, [1, 4, 7]]
+        v[b_idx, [1, 4, 7]] = v[d_idx, [7, 4, 1]]  # this one is special!
+        v[d_idx, [1, 4, 7]] = tmp
+
+    def _rotate_xz_middle(self):
+        u_idx, r_idx, d_idx, l_idx = [self._face_map[f] for f in ['U', 'R', 'D', 'L']]
+        v = self._c.reshape(6, 9)
+        tmp = v[u_idx, [3, 4, 5]].copy()
+        v[u_idx, [3, 4, 5]] = v[l_idx, [7, 4, 1]]
+        v[l_idx, [7, 4, 1]] = v[d_idx, [5, 4, 3]]
+        v[d_idx, [5, 4, 3]] = v[r_idx, [1, 4, 7]]  # this one is special!
+        v[r_idx, [1, 4, 7]] = tmp
+
+    def rotate(self, face, clockwise=None, record=True):
+        '''
+        Operate the cube
+        :param face: Which face has to be turned (clockwise or counterclockwise)
+        :param clockwise: Whether it is clockwise
+        :param record: Whether the rotation should be recorded into the _rec. The whole cube rotation should not be recorded.
+        :return: None
+        '''
 
         if clockwise is None and len(face) == 1:
             clockwise = True
@@ -181,12 +219,17 @@ class Cube(object):
             v[d_idx, d_nbr] = v[r_idx, r_nbr]
             v[r_idx, r_nbr] = v[u_idx, u_nbr]
             v[u_idx, u_nbr] = temp
+            if record:
+                self._rec.append(face)
         else:
             self._c[f_idx] = (self._c[f_idx].T)[::-1, :]
             v[l_idx, l_nbr] = v[u_idx, u_nbr]
             v[u_idx, u_nbr] = v[r_idx, r_nbr]
             v[r_idx, r_nbr] = v[d_idx, d_nbr]
             v[d_idx, d_nbr] = temp
+            if record:
+                self._rec.append(face[0] + "'")
+
         return self
 
     def _parse_str_seq_to_list(self, seq):
@@ -205,7 +248,7 @@ class Cube(object):
             i += 1
         return s
 
-    def rotate_sequence(self, seq):
+    def rotate_sequence(self, seq, record=True):
         '''
         Perform a set of operations represented by string. Support ' or 2, but do not support some like "L'2", "L2'"
         :param seq: The operation sequence.
@@ -214,13 +257,13 @@ class Cube(object):
         op_list = self._parse_str_seq_to_list(seq)
         for r in op_list:
             if r[-1] == '2':
-                self.rotate(r[0])
-                self.rotate(r[0])
+                self.rotate(r[0], record=record)
+                self.rotate(r[0], record=record)
             else:
-                self.rotate(r)
+                self.rotate(r, record=record)
         return self
 
-    def view(self, axis):
+    def view(self, axis, record=True):
         '''
         We rotate the whole cube around an axis.
         X axis: A ray from left to right
@@ -228,14 +271,67 @@ class Cube(object):
         Z axis: A ray from down to up
         To determine clockwise or counterclockwise, we have to look at the direction of the ray.
         :param axis: The axis. The value can be x, y, z or x', y', z'. If it is 'o', the face direction will be recovered.
+        :param record: Whether we rotate the "whole turning" operation.
         :return: None. But the rotation will be recorded, for further recovery.
         '''
-        pass
+        axis = axis.lower()
+        clockwise = True
+        if len(axis) > 1 and axis[1] == "'":
+            clockwise = False
+        if axis[0] == 'x':
+            if clockwise:
+                self.rotate_sequence("LR'", record=False)
+                self._rotate_yz_middle()
+                if record:
+                    self._rec.append("x")
+            else:
+                self.rotate_sequence("L'R", record=False)
+                self._rotate_yz_middle()
+                self._rotate_yz_middle()
+                self._rotate_yz_middle()
+                if record:
+                    self._rec.append("x'")
+        elif axis[0] == 'y':
+            if clockwise:
+                self.rotate_sequence("FB'", record=False)
+                self._rotate_xz_middle()
+                if record:
+                    self._rec.append("y")
+            else:
+                self.rotate_sequence("F'B", record=False)
+                self._rotate_xz_middle()
+                self._rotate_xz_middle()
+                self._rotate_xz_middle()
+                if record:
+                    self._rec.append("y'")
+        elif axis[0] == 'z':
+            if clockwise:
+                self.rotate_sequence("UD'", record=False)
+                self._rotate_xy_middle()
+                if record:
+                    self._rec.append("z")
+            else:
+                self.rotate_sequence("U'D", record=False)
+                self._rotate_xy_middle()
+                self._rotate_xy_middle()
+                self._rotate_xy_middle()
+                if record:
+                    self._rec.append("z'")
+        elif axis[0] == 'o':
+            inv_op = {
+                "x": "x'",
+                "y": "y'",
+                "z": "z'",
+                "x'": "x",
+                "y'": "y",
+                "z'": "z"
+            }
+            for r in reversed(self._rec):
+                if r in inv_op.keys():
+                    self.view(inv_op[r], record) # The inverse operation may also be recorded.
 
-    def show(self):
-        scrambles = " ".join(self._parse_str_seq_to_list(KociembaSolver(self).solve(Cube())))
-        cube_py_cuber = pc.Cube()(scrambles)
-        print(cube_py_cuber)
+        else:
+            return ValueError("axis = {}, which has illegal letter".format(axis))
 
 
     def __getitem__(self, item):
@@ -373,13 +469,15 @@ class KociembaSolver(CubeSolver):
 
 if __name__ == '__main__':
     cube = Cube()
-    cube.rotate_sequence("L2")
-    cube.show()
-    # ans = KociembaSolver().solve(cube)
-    # input_str = cube.to_lbl_wrapper_compatible_string()
-    # print(input_str)
-    # print(lblcube.partial_solve(input_str, 4))
-
+    # cube.rotate_sequence("L2")
+    # cube.show()
+    print(cube)
+    cube.view("y'")
+    # cube.view('x')
+    print(cube)
+    cube.view('o')
+    print(cube)
+    # print(cube)
 # UFBRLD
 # gwbgrgorw rybwoboyr yrybwrbgo ywgrwobyb wwywbbryg grooggooy
 # gwbgrgorwrybwoboyryrybwrbgoywgrwobybwwywbbryggrooggooy
