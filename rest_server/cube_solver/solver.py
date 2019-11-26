@@ -2,7 +2,8 @@ import numpy as np
 from abc import ABCMeta, abstractmethod
 from collections import deque
 import kociemba
-import lblcube
+import pycuber as pc
+from deprecated import deprecated
 
 
 def get_face_map():
@@ -104,14 +105,25 @@ class Cube(object):
         else:
             raise ValueError("The cube string must be either string or ndarray")
 
+        self._rec = []   # All operations done to the cube, including turning the whole cube and for one step.
+        self._op_label = {}  # The operation span. [string => tuple]
+
+        self._ori_rec = []  # The record for turning the whole cube, making it easy to get back
+
     def __copy__(self):
+        '''
+        A deep copy of the cube object
+        :return: A copied object
+        '''
         c = Cube()
-        c._face_map = self._face_map
-        c._face_rel = self._face_rel
         c._c = self._c.copy()   # Only copy the state of the cube because others are read-only
         return c
 
     def to_kociemba_compatible_string(self):
+        '''
+        The kociemba library has different face map. We have to do rearrangement and flatten the array to string.
+        :return: Kociemba representation of the cube.
+        '''
         c2 = self._c.reshape(6, 9)
         s = ''
         for i in range(6):
@@ -119,7 +131,13 @@ class Cube(object):
             s += ''.join([self._inv_face_map[c] for c in colors])
         return s
 
+    @deprecated
     def to_lbl_wrapper_compatible_string(self):
+        '''
+        It is for lbl solver. But this wrapper does not seem to work even in some simple cases. Therefore, I'll write the
+        rules for myself. In case of further reuse, it is kept.
+        :return: LBL solver-compatible string input.
+        '''
         ans_str = ""
         cr = self._c.reshape(6, 9)
         for i in range(6):
@@ -171,19 +189,54 @@ class Cube(object):
             v[d_idx, d_nbr] = temp
         return self
 
-    def rotate_sequence(self, seq):
+    def _parse_str_seq_to_list(self, seq):
         i = 0
         s = []
         while i < len(seq):
             t = seq[i]
-            if i < len(seq) - 1 and seq[i + 1] == "'":
-                t += "'"
-                i += 1
+            if i < len(seq) - 1:
+                if seq[i + 1] == "'":
+                    t += "'"
+                    i += 1
+                elif seq[i + 1] == "2":
+                    t += '2'
+                    i += 1
             s.append(t)
             i += 1
-        for r in s:
-            self.rotate(r)
+        return s
+
+    def rotate_sequence(self, seq):
+        '''
+        Perform a set of operations represented by string. Support ' or 2, but do not support some like "L'2", "L2'"
+        :param seq: The operation sequence.
+        :return: None. But the cube array has been modified.
+        '''
+        op_list = self._parse_str_seq_to_list(seq)
+        for r in op_list:
+            if r[-1] == '2':
+                self.rotate(r[0])
+                self.rotate(r[0])
+            else:
+                self.rotate(r)
         return self
+
+    def view(self, axis):
+        '''
+        We rotate the whole cube around an axis.
+        X axis: A ray from left to right
+        Y axis: A ray from front to back
+        Z axis: A ray from down to up
+        To determine clockwise or counterclockwise, we have to look at the direction of the ray.
+        :param axis: The axis. The value can be x, y, z or x', y', z'. If it is 'o', the face direction will be recovered.
+        :return: None. But the rotation will be recorded, for further recovery.
+        '''
+        pass
+
+    def show(self):
+        scrambles = " ".join(self._parse_str_seq_to_list(KociembaSolver(self).solve(Cube())))
+        cube_py_cuber = pc.Cube()(scrambles)
+        print(cube_py_cuber)
+
 
     def __getitem__(self, item):
         if item in ['L', 'R', 'U', 'D', 'F', 'B']:
@@ -214,6 +267,7 @@ class Cube(object):
             s += "\n"
         return s
 
+
     def __eq__(self, other):
         return np.all(self._c == other._c)
 
@@ -240,11 +294,12 @@ class CubeSolver(metaclass=ABCMeta):
     def solve(self, cube: Cube):
         pass
 
+
 class BruteSolver(CubeSolver):
 
-    def __init__(self):
+    def __init__(self, terminal=Cube()):
         super().__init__()
-        self.terminal = Cube()
+        self.terminal = terminal
 
     def solve(self, cube: Cube):
         q = deque()
@@ -272,18 +327,6 @@ class LBLSolver(CubeSolver):
 
     def __init__(self):
         super(LBLSolver, self).__init__()
-        self.terminal = Cube()
-        self._face_map = get_face_map()
-        self._face_rel, self._nb = get_face_rel()
-        self._step_functions = [
-            lblcube.solve_white_cross,
-            lblcube.solve_white_corners,
-            lblcube.solve_middle_layer,
-            lblcube.solve_yellow_cross,
-            lblcube.solve_yellow_corners,
-            lblcube.yellow_corner_orientation,
-            lblcube.yellow_edges_colour_arrangement
-        ]
 
     def solve_up_cross(self, cube):
         pass
@@ -294,7 +337,10 @@ class LBLSolver(CubeSolver):
     def solve_middle_layer(self, cube):
         pass
 
-    def solve_yellow_cross(self, cube):
+    def solve_down_cross(self, cube):
+        pass
+
+    def down_corner_orientation(self, cube):
         pass
 
     def solve(self, cube: Cube):
@@ -327,10 +373,11 @@ class KociembaSolver(CubeSolver):
 
 if __name__ == '__main__':
     cube = Cube()
-    cube.rotate_sequence("L")
+    cube.rotate_sequence("L2")
+    cube.show()
     # ans = KociembaSolver().solve(cube)
-    input_str = cube.to_lbl_wrapper_compatible_string()
-    print(input_str)
+    # input_str = cube.to_lbl_wrapper_compatible_string()
+    # print(input_str)
     # print(lblcube.partial_solve(input_str, 4))
 
 # UFBRLD
