@@ -1,0 +1,24 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Users/apple/Desktop/profile/easy_cube/rest_server/cube_solver/lbl_wrapper/lblcube.cpp
+pybind11/pybind11.h
+-
+string
+-
+vector
+-
+cstring
+-
+cstdlib
+-
+functional
+-
+iostream
+-
+

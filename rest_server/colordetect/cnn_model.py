@@ -141,7 +141,7 @@ class ConvolutionalDetector(BaseEstimator, TransformerMixin):
     @staticmethod
     def load(file_name, device):
         with open(file_name, 'rb') as f:
-            model_ = joblib.load(f)
+            model_ = torch.load(f, map_location=device)
             model_.device = device
         return model_
 
@@ -296,8 +296,10 @@ if __name__ == '__main__':
     cv_results = model.cv_results_
     with open(os.path.join(model_dir, 'cv_result.txt'), 'w') as f:
         f.write(str(cv_results))
+
+    best_model.model.to('cpu')
     with open(os.path.join(model_dir, 'best_model'), 'wb') as f:
-        joblib.dump(best_model, f)
+        torch.save(best_model, f)
     print("Finish. Plotting the curve")
 
     plt.figure(figsize=(20, 10))

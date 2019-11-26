@@ -10,7 +10,7 @@ if __name__ == '__main__':
     test_files = sorted([os.path.join('test', x) for x in test_files])
 
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    cnn_model = CNNDetectorInference('./models/best_model', 'cuda')
+    cnn_model = CNNDetectorInference('./models/best_model', device)
 
     predicts = []
     for f in test_files:
