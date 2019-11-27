@@ -454,6 +454,7 @@ class LBLSolver(CubeSolver):
     def __init__(self):
         super(LBLSolver, self).__init__()
 
+    # For up cross
     def _case1(self, cube, desire):
         for i in range(4):  # U on the left
             if cube['L'][2][1] == self._face_map['U'] and cube['D'][1][0] == desire:
@@ -504,6 +505,151 @@ class LBLSolver(CubeSolver):
             cube.rotate('D', record=False)
         return False
 
+    # For up corners
+    def _case6(self, cube, desire_f, desire_l):
+        '''
+        可以通过D操作达到c['L'][2][2] = 'U' 且的情况
+        :param cube:
+        :param desire_f:
+        :param desire_l:
+        :return:
+        '''
+        for i in range(4):
+            if cube['L'][2][2] == self._face_map['U'] and cube['F'][2][0] == desire_f and \
+                    cube['D'][0][0] == desire_l:
+                cube.push_back_record(shortcut('D', i))
+                cube.rotate_sequence("D'F'DF")
+                return True
+            cube.rotate('D', record=False)
+        return False
+
+    def _case7(self, cube, desire_f, desire_l):
+        '''
+        可以通过D操作达到c['F'][2][0] = 'U' 且的情况
+        :param cube:
+        :param desire_f:
+        :param desire_l:
+        :return:
+        '''
+        for i in range(4):
+            if cube['F'][2][0] == self._face_map['U'] and cube['L'][2][2] == desire_l and \
+                    cube['D'][0][0] == desire_f:
+                cube.push_back_record(shortcut('D', i))
+                cube.rotate_sequence("DLD'L'")
+                return True
+            cube.rotate('D', record=False)
+        return False
+
+    def _case8(self, cube, desire_f, desire_l):
+        '''
+        经过D操作可以将U带到c['D'][0][0]
+        :param cube:
+        :param desire_f:
+        :param desire_l:
+        :return:
+        '''
+        for i in range(4):
+            if cube['D'][0][0] == self._face_map['U'] and cube['L'][2][2] == desire_f and \
+                    cube['F'][2][0] == desire_l:
+                cube.push_back_record(shortcut('D', i))
+                cube.rotate_sequence("F'D'D'FD")
+                self._case7(cube, desire_f, desire_l)
+                return True
+            cube.rotate('D', record=False)
+        return False
+
+    def _case9(self, cube, desire_f, desire_l):
+        '''
+        c['L'][0][2] = 'U' and c['F'][0][0] = desire_l and c['U'][2][0] = desire_f
+        :param cube:
+        :param desire_f:
+        :param desire_l:
+        :return:
+        '''
+        if cube['L'][0][2] == self._face_map['U'] and cube['F'][0][0] == desire_l and cube['U'][2][0] == desire_f:
+            cube.rotate_sequence("LDL'D'")
+            return self._case6(cube, desire_f, desire_l)
+
+
+    def _case10(self, cube, desire_f, desire_l):
+        '''
+        对角调换的情况
+        :param cube:
+        :param desire_f:
+        :param desire_l:
+        :return:
+        '''
+        if cube['U'][0][2] == self._face_map['U'] and cube['R'][0][2] == desire_l and cube['B'][0][0] == desire_f:
+            cube.rotate_sequence("B'D'D'B")
+            return self._case6(cube, desire_f, desire_l)
+
+    def _case11(self, cube, desire_f, desire_l):
+        '''
+        与后面的邻角调换的情况
+        :param cube:
+        :param desire_f:
+        :param desire_l:
+        :return:
+        '''
+        if cube['U'][0][0] == self._face_map['U'] and cube['L'][0][0] == desire_f and cube['B'][0][2] == desire_l:
+            cube.rotate_sequence("L'DLD")
+            return self._case7(cube, desire_f, desire_l)
+
+    def _case12(self, cube, desire_f, desire_l):
+        '''
+        与右面的邻角调换的情况
+        :param cube:
+        :param desire_f:
+        :param desire_l:
+        :return:
+        '''
+        if cube['U'][2][2] == self._face_map['U'] and cube['F'][0][2] == desire_l and cube['R'][0][0] == desire_f:
+            cube.rotate_sequence("R'D'R")
+            return self._case6(cube, desire_f, desire_l)
+
+    def _case13(self, cube, desire_f, desire_l):
+        '''
+        U在FR上排的情况
+        :param cube:
+        :param desire_f:
+        :param desire_l:
+        :return:
+        '''
+        if cube['F'][0][2] == self._face_map['U'] and cube['U'][2][2] == desire_f and cube['R'][0][0] == desire_l: # 右面邻角的前面
+            cube.rotate_sequence("R'D'R")
+            return self._case8(cube, desire_f, desire_l)
+        if cube['R'][0][0] == self._face_map['U'] and cube['F'][0][2] == desire_f and cube['U'][2][2] == desire_l: # 右面邻角的右面
+            cube.rotate_sequence("R'D'R")
+            return self._case7(cube, desire_f, desire_l)
+
+    def _case14(self, cube, desire_f, desire_l):
+        '''
+        U在FL上排的情况
+        :param cube:
+        :param desire_f:
+        :param desire_l:
+        :return:
+        '''
+        if cube['F'][0][0] == self._face_map['U'] and cube['U'][2][0] == desire_l and cube['L'][0][2] == desire_f:
+            cube.rotate_sequence("LDL'D'")
+            return self._case8(cube, desire_f, desire_l)
+
+    def _case15(self, cube, desire_f, desire_l):  # U在BR上排的情况
+        if cube['B'][0][0] == self._face_map['U'] and cube['U'][0][2] == desire_l and cube['R'][0][2] == desire_f:
+            cube.rotate_sequence("B'D'D'B")
+            return self._case7(cube, desire_f, desire_l)
+        if cube['R'][0][2] == self._face_map['U'] and cube['B'][0][0] == desire_l and cube['U'][0][2] == desire_f:
+            cube.rotate_sequence("B'D'D'B")
+            return self._case8(cube, desire_f, desire_l)
+
+    def _case16(self, cube, desire_f, desire_l):  # U在BL上排的情况
+        if cube['B'][0][2] == self._face_map['U'] and cube['L'][0][0] == desire_l and cube['U'][0][0] == desire_f:
+            cube.rotate_sequence("BDB'")
+            return self._case6(cube, desire_f, desire_l)
+        if cube['L'][0][0] == self._face_map['U'] and cube['U'][0][0] == desire_l and cube['B'][0][2] == desire_f:
+            cube.rotate_sequence("L'DDLD'")
+            return self._case7(cube, desire_f, desire_l)
+
 
     def up_cross_one(self, cube, desire, stage):
         '''
@@ -545,6 +691,45 @@ class LBLSolver(CubeSolver):
 
         raise NotImplementedError("There are other cases not implemented")
 
+    def up_corner_one(self, cube, desire_f, desire_l):
+        if cube['U'][2][0] == self._face_map['U'] and cube['L'][0][2] == desire_l and cube['F'][0][0] == desire_f:   # No operation needed
+            return
+
+        if self._case6(cube, desire_f, desire_l):
+            return
+
+        if self._case7(cube, desire_f, desire_l):
+            return
+
+        if self._case8(cube, desire_f, desire_l):
+            return
+
+        if self._case9(cube, desire_f, desire_l):
+            return
+
+        if self._case10(cube, desire_f, desire_l):
+            return
+
+        if self._case11(cube, desire_f, desire_l):
+            return
+
+        if self._case12(cube, desire_f, desire_l):
+            return
+
+        if self._case13(cube, desire_f, desire_l):
+            return
+
+        if self._case14(cube, desire_f, desire_l):
+            return
+
+        if self._case15(cube, desire_f, desire_l):
+            return
+
+        if self._case16(cube, desire_f, desire_l):
+            return
+
+        print(cube)
+        raise NotImplementedError("Some top corner cases are not implemented")
 
     def solve_up_cross(self, cube):
         '''
@@ -558,7 +743,16 @@ class LBLSolver(CubeSolver):
 
 
     def solve_up_corner(self, cube):
-        pass
+        '''
+        这里的思路是还原ULF，然后转魔方
+        :param cube:
+        :return:
+        '''
+        for i in range(4):
+            desire_l = cube['L'][1][1]
+            desire_f = cube['F'][1][1]
+            self.up_corner_one(cube, desire_f, desire_l)
+            cube.view('z')
 
     def solve_middle_layer(self, cube):
         pass
@@ -605,7 +799,7 @@ class KociembaSolver(CubeSolver):
         return ans
 
 def _ut_up_cross():
-    T = 100000
+    T = 10000
     fm = get_face_map()
     np.random.seed(41)
     for i in trange(T):
@@ -634,12 +828,53 @@ def _ut_up_cross():
             print("=======See clearly==========")
             print(cube_c)
             break
+        else:
+            print("success.")
+
+def _ut_up_corner():
+    T = 10000
+    fm = get_face_map()
+    np.random.seed(42)
+    for i in trange(T):
+        cube = Cube()
+        q = np.random.randint(12, 20)
+        seq = []
+        for i in range(q):
+            step = ['U', 'D', 'L', 'R', 'F', 'B'][np.random.randint(0, 6)]
+            b = np.random.randint(0, 2)
+            if b == 1:
+                step += "'"
+            seq.append(step)
+        cube.rotate_sequence(seq, record=False)
+        cube_c = cube.copy()
+        solver = LBLSolver()
+        solver.solve_up_cross(cube_c)
+        solver.solve_up_corner(cube_c)
+        flag = True
+        for j in range(4):
+            if not (cube_c['U'][2][1] == fm['U'] and cube_c['F'][0][1] == cube_c['F'][1][1]):
+                flag = False
+                break
+            if not (cube_c['U'][2][0] == fm['U'] and cube_c['L'][0][2] == cube_c['L'][1][1] and
+                    cube_c['F'][0][0] == cube_c['F'][1][1]):
+                flag = False
+                break
+            cube_c.view('z')
+        if not flag:
+            print("=======Error Happens========")
+            print(cube)
+            print("=======See clearly==========")
+            print(cube_c)
+            break
 
 
+def regression_test():
+    # _ut_up_cross()
+    _ut_up_corner()
 
 
 if __name__ == '__main__':
-    _ut_up_cross()
+    regression_test()
 
 
 # UFBRLD
