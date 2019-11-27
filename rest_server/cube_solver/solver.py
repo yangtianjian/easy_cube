@@ -34,6 +34,13 @@ def get_inv_lbl_wrapper_face_map():
     fm = get_lbl_wrapper_face_map()
     return dict([(v, k) for k, v in fm.items()])
 
+def shortcut(op, times):
+    if times <= 2:
+        return [op] * times
+    if times == 3:
+        return [op + "'"]
+    return []
+
 def get_face_rel():
     '''
     Get the relation of faces. The orientation of the cube should be 123456789 from top to down, left to right
@@ -108,8 +115,6 @@ class Cube(object):
         self._rec = []   # All operations done to the cube, including turning the whole cube and for one step.
         self._op_label = {}  # The operation span. [string => tuple]
 
-        self._ori_rec = []  # The record for turning the whole cube, making it easy to get back
-
     def __copy__(self):
         '''
         A deep copy of the cube object
@@ -118,6 +123,20 @@ class Cube(object):
         c = Cube()
         c._c = self._c.copy()   # Only copy the state of the cube because others are read-only
         return c
+
+    def clear_record(self):
+        self._rec.clear()
+        self._op_label.clear()
+
+    def push_back_record(self, op):
+        if len(op) == 0:  # empty string or empty list
+            return
+        if isinstance(op, str):
+            self._rec.append(op)
+        elif isinstance(op, list):
+            self._rec.extend(op)
+        else:
+            raise ValueError("The record should either be string or list")
 
     def to_kociemba_compatible_string(self):
         '''
@@ -381,6 +400,7 @@ class Cube(object):
 
 class CubeSolver(metaclass=ABCMeta):
     _face_map = get_face_map()
+    _inv_face_map = get_inv_face_map()
     _face_rel, _nb = get_face_rel()
 
     def __init__(self):
@@ -424,8 +444,109 @@ class LBLSolver(CubeSolver):
     def __init__(self):
         super(LBLSolver, self).__init__()
 
+    def _case1(self, cube, desire):
+        for i in range(4):  # U on the left
+            if cube['L'][2][1] == self._face_map['U'] and cube['D'][1][0] == desire:
+                cube.push_back_record(shortcut('L', i))
+                cube.rotate_sequence("L'FL")
+                return True
+            cube.rotate('L', record=False)   # For covering other cases
+        return False
+
+    def _case2(self, cube, desire):
+        for i in range(4): # U on the right
+            if cube['R'][2][1] == self._face_map['U'] and cube['D'][1][2] == desire:
+                cube.push_back_record(shortcut('R', i))
+                cube.rotate_sequence("RF'R'")
+                return True
+            cube.rotate('R', record=False)   # For covering other cases
+        return False
+
+    def _case3(self, cube, desire):
+        for i in range(4): # U on the front
+            if cube['F'][2][1] == self._face_map['U'] and cube['D'][0][1] == desire:
+                cube.push_back_record(shortcut('F', i))
+                cube.rotate_sequence("DRF'R'")
+                return True
+            cube.rotate('F', record=False)   # For covering other cases
+        return False
+
+    def _case4(self, cube, desire):
+        for i in range(4): # U on the back
+            if cube['B'][2][1] == self._face_map['U'] and cube['D'][2][1] == desire:
+                # We switch the camera to make it more clear
+                cube.push_back_record(shortcut('B', i))
+                cube.rotate_sequence("D")
+                cube.push_back_record(shortcut("B'", i))  # prevent from messing the others
+                cube.rotate_sequence("L'FL")
+                return True
+            cube.rotate('B', record=False)   # For covering other cases
+        return False
+
+    def _case5(self, cube, desire):
+        for i in range(4): # U on the down side
+            if cube['D'][0][1] == self._face_map['U'] and cube['F'][2][1] == desire:
+                cube.push_back_record(shortcut('D', i))
+                cube.rotate_sequence("FF")
+                return True
+            cube.rotate('D', record=False)
+        return False
+
+
+    def up_cross_one(self, cube, desire, stage):
+        '''
+        将一个UF edge 进行还原。
+        :param cube:
+        :return:
+        '''
+        if cube['U'][2][1] == self._face_map['U'] and cube['F'][0][1] == desire:
+            return    # No operation needed.
+
+        if self._case1(cube, desire):
+            return
+
+        if self._case2(cube, desire):
+            return
+
+        if self._case3(cube, desire):
+            return
+
+        if self._case4(cube, desire):
+            return
+
+        if self._case5(cube, desire):
+            return
+
+        # 特判U在上面
+        if cube['U'][1][0] == self._face_map['U'] and cube['L'][0][1] == desire:  # 一定在cross的第一次发生
+            assert(stage == 0)
+            cube.rotate_sequence("U'")
+            return
+        if cube['U'][1][2] == self._face_map['U'] and cube['R'][0][1] == desire:
+            cube.rotate_sequence("R'")
+            if self._case3(cube, desire):
+                return
+        if cube['U'][0][1] == self._face_map['U'] and cube['B'][0][1] == desire:
+            cube.rotate_sequence("B'")
+            if self._case2(cube, desire):
+                return
+
+        print(cube)
+        raise NotImplementedError("There are other cases not implemented")
+
+
     def solve_up_cross(self, cube):
-        pass
+        '''
+        这里的思路是先还原一个UF，然后转魔方，以此类推，还原出四个UF
+        :param cube:
+        :return:
+        '''
+        for i in range(4):
+            print("=====stage{}======".format(i))
+            self.up_cross_one(cube, cube['F'][1][1], i)
+            cube.view('z')
+            print(cube)
+
 
     def solve_up_corner(self, cube):
         pass
@@ -436,11 +557,19 @@ class LBLSolver(CubeSolver):
     def solve_down_cross(self, cube):
         pass
 
-    def down_corner_orientation(self, cube):
+    def solve_down_corner(self, cube):
         pass
 
-    def solve(self, cube: Cube):
-        pass
+    def solve(self, cube: Cube, inplace=False):
+        if not inplace:
+            cube = cube.copy()
+        cube.clear_record()
+        self.solve_up_cross(cube)
+        self.solve_up_corner(cube)
+        self.solve_middle_layer(cube)
+        self.solve_down_cross(cube)
+        self.solve_down_corner(cube)
+
 
 
 class KociembaSolver(CubeSolver):
@@ -469,15 +598,15 @@ class KociembaSolver(CubeSolver):
 
 if __name__ == '__main__':
     cube = Cube()
-    # cube.rotate_sequence("L2")
-    # cube.show()
     print(cube)
-    cube.view("y'")
-    # cube.view('x')
+    cube.rotate_sequence("LLBDL'L'RDUL'UUDD")
     print(cube)
-    cube.view('o')
+    solver = LBLSolver()
+    solver.solve(cube, inplace=True)
+    cube.view('z')
     print(cube)
-    # print(cube)
+
+
 # UFBRLD
 # gwbgrgorw rybwoboyr yrybwrbgo ywgrwobyb wwywbbryg grooggooy
 # gwbgrgorwrybwoboyryrybwrbgoywgrwobybwwywbbryggrooggooy
