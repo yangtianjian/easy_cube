@@ -4,6 +4,7 @@ from collections import deque
 import kociemba
 import pycuber as pc
 from deprecated import deprecated
+from tqdm import tqdm, trange
 
 
 def get_face_map():
@@ -38,7 +39,10 @@ def shortcut(op, times):
     if times <= 2:
         return [op] * times
     if times == 3:
-        return [op + "'"]
+        if op[-1] == "'":
+            return [op[0]] * (4 - times)
+        else:
+            return [op + "'"]
     return []
 
 def get_face_rel():
@@ -127,6 +131,9 @@ class Cube(object):
     def clear_record(self):
         self._rec.clear()
         self._op_label.clear()
+
+    def get_record(self):
+        return self._rec
 
     def push_back_record(self, op):
         if len(op) == 0:  # empty string or empty list
@@ -273,8 +280,11 @@ class Cube(object):
         :param seq: The operation sequence.
         :return: None. But the cube array has been modified.
         '''
-        op_list = self._parse_str_seq_to_list(seq)
-        for r in op_list:
+        if len(seq) == 0:
+            return
+        if isinstance(seq, str):
+            seq = self._parse_str_seq_to_list(seq)
+        for r in seq:
             if r[-1] == '2':
                 self.rotate(r[0], record=record)
                 self.rotate(r[0], record=record)
@@ -449,6 +459,7 @@ class LBLSolver(CubeSolver):
             if cube['L'][2][1] == self._face_map['U'] and cube['D'][1][0] == desire:
                 cube.push_back_record(shortcut('L', i))
                 cube.rotate_sequence("L'FL")
+                cube.rotate_sequence(shortcut("L'", i))  # avoid messing up
                 return True
             cube.rotate('L', record=False)   # For covering other cases
         return False
@@ -458,6 +469,7 @@ class LBLSolver(CubeSolver):
             if cube['R'][2][1] == self._face_map['U'] and cube['D'][1][2] == desire:
                 cube.push_back_record(shortcut('R', i))
                 cube.rotate_sequence("RF'R'")
+                cube.rotate_sequence(shortcut("R'", i))  # avoid messing up
                 return True
             cube.rotate('R', record=False)   # For covering other cases
         return False
@@ -477,7 +489,7 @@ class LBLSolver(CubeSolver):
                 # We switch the camera to make it more clear
                 cube.push_back_record(shortcut('B', i))
                 cube.rotate_sequence("D")
-                cube.push_back_record(shortcut("B'", i))  # prevent from messing the others
+                cube.rotate_sequence(shortcut("B'", i))  # prevent from messing the others
                 cube.rotate_sequence("L'FL")
                 return True
             cube.rotate('B', record=False)   # For covering other cases
@@ -531,7 +543,6 @@ class LBLSolver(CubeSolver):
             if self._case2(cube, desire):
                 return
 
-        print(cube)
         raise NotImplementedError("There are other cases not implemented")
 
 
@@ -542,10 +553,8 @@ class LBLSolver(CubeSolver):
         :return:
         '''
         for i in range(4):
-            print("=====stage{}======".format(i))
             self.up_cross_one(cube, cube['F'][1][1], i)
             cube.view('z')
-            print(cube)
 
 
     def solve_up_corner(self, cube):
@@ -595,16 +604,42 @@ class KociembaSolver(CubeSolver):
             return "".join(tmp)
         return ans
 
+def _ut_up_cross():
+    T = 100000
+    fm = get_face_map()
+    np.random.seed(41)
+    for i in trange(T):
+        cube = Cube()
+        q = np.random.randint(12, 20)
+        seq = []
+        for i in range(q):
+            step = ['U', 'D', 'L', 'R', 'F', 'B'][np.random.randint(0, 6)]
+            b = np.random.randint(0, 2)
+            if b == 1:
+                step += "'"
+            seq.append(step)
+        cube.rotate_sequence(seq, record=False)
+        cube_c = cube.copy()
+        solver = LBLSolver()
+        solver.solve_up_cross(cube_c)
+        flag = True
+        for j in range(4):
+            if not (cube_c['U'][2][1] == fm['U'] and cube_c['F'][0][1] == cube_c['F'][1][1]):
+                flag = False
+                break
+            cube_c.view('z')
+        if not flag:
+            print("=======Error Happens========")
+            print(cube)
+            print("=======See clearly==========")
+            print(cube_c)
+            break
+
+
+
 
 if __name__ == '__main__':
-    cube = Cube()
-    print(cube)
-    cube.rotate_sequence("LLBDL'L'RDUL'UUDD")
-    print(cube)
-    solver = LBLSolver()
-    solver.solve(cube, inplace=True)
-    cube.view('z')
-    print(cube)
+    _ut_up_cross()
 
 
 # UFBRLD
