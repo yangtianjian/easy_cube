@@ -135,10 +135,10 @@ class Cube(object):
         self._op_label.clear()
 
     def get_record(self):
-        return self._rec
+        return self._rec.copy()
 
     def get_array(self):
-        return self._c
+        return self._c.copy()
 
     def push_back_record(self, op):
         if len(op) == 0:  # empty string or empty list
@@ -199,6 +199,7 @@ class Cube(object):
         v[r_idx, [3, 4, 5]] = v[b_idx, [3, 4, 5]]
         v[b_idx, [3, 4, 5]] = v[l_idx, [3, 4, 5]]
         v[l_idx, [3, 4, 5]] = tmp
+        return self
 
     def _rotate_yz_middle(self):
         f_idx, d_idx, b_idx, u_idx = [self._face_map[f] for f in ['F', 'D', 'B', 'U']]
@@ -208,6 +209,7 @@ class Cube(object):
         v[u_idx, [1, 4, 7]] = v[b_idx, [7, 4, 1]]
         v[b_idx, [1, 4, 7]] = v[d_idx, [7, 4, 1]]  # this one is special!
         v[d_idx, [1, 4, 7]] = tmp
+        return self
 
     def _rotate_xz_middle(self):
         u_idx, r_idx, d_idx, l_idx = [self._face_map[f] for f in ['U', 'R', 'D', 'L']]
@@ -217,6 +219,7 @@ class Cube(object):
         v[l_idx, [7, 4, 1]] = v[d_idx, [5, 4, 3]]
         v[d_idx, [5, 4, 3]] = v[r_idx, [1, 4, 7]]  # this one is special!
         v[r_idx, [1, 4, 7]] = tmp
+        return self
 
     def rotate(self, face, clockwise=None, record=True):
         '''
@@ -226,6 +229,7 @@ class Cube(object):
         :param record: Whether the rotation should be recorded into the _rec. The whole cube rotation should not be recorded.
         :return: None
         '''
+        face = face.upper()
 
         if clockwise is None and len(face) == 1:
             clockwise = True
@@ -363,9 +367,38 @@ class Cube(object):
             for r in reversed(self._rec):
                 if r in inv_op.keys():
                     self.view(inv_op[r], record) # The inverse operation may also be recorded.
-
         else:
-            return ValueError("axis = {}, which has illegal letter".format(axis))
+            raise ValueError("axis = {}, which has illegal letter".format(axis))
+        return self
+
+    def _rotate_or_view(self, op, record=True):
+        op = op.upper()
+        if op[0] in ["U", "D", "F", "B", "L", "R"]:
+            self.rotate(op, record=record)
+        else:
+            self.view(op, record=record)
+        return self
+
+    def rotate_or_view_sequence(self, seq, record=True):
+        '''
+        This function can interpret a sequence of views or operations.
+        If the sequence only contains operations but not views, it is recommended to use rotate_sequence function
+        :param seq:
+        :param record:
+        :return:
+        '''
+        if len(seq) == 0:
+            return
+        if isinstance(seq, str):
+            seq = self._parse_str_seq_to_list(seq)
+        for r in seq:
+            if r[-1] == '2':
+                self._rotate_or_view(r[0], record=record)
+                self._rotate_or_view(r[0], record=record)
+            else:
+                self._rotate_or_view(r, record=record)
+        return self
+
 
     def is_up_cross_finished(self):
         flag = True
@@ -415,10 +448,25 @@ class Cube(object):
         cp = self.copy()
         cp.view("o", record=False)
         for i in range(4):
-            if not (cp['F'][1][1] == cp['F'][0][0] == cp['F'][0][2]):
+            if not (cp['F'][1][1] == cp['F'][2][0] == cp['F'][2][2] and cp['D'][0][0] == cp['D'][0][2] == cp['D'][1][1]):
                 return False
-            cp.view("z")
+            cp.view("z", record=False)
         return True
+
+    def is_down_edge_finished(self):
+        cp = self.copy()
+        cp.view("o", record=False)
+        for i in range(4):
+            if not (cp['F'][2][1] == cp['F'][1][1] and cp['D'][0][1] == cp['D'][1][1]):
+                return False
+            cp.view("z", record=False)
+        return True
+
+    def is_face_solved(self, face):
+        return np.all(self[face].reshape((-1,)) == self[face][1][1])
+
+    def is_all_solved(self):
+        return np.all([self.is_face_solved(f) for f in ['U', 'D', 'L', 'R', 'F', 'B']])
 
 
     def __getitem__(self, item):
@@ -867,6 +915,23 @@ class LBLSolver(CubeSolver):
             cube.rotate("U", record=False)
         return False
 
+    # For the last step of solving the down edge
+    def _case31(self, cube):
+        if cube['L'][0][1] == cube['R'][1][1] and cube['R'][0][1] == cube['F'][1][1] and cube['F'][0][1] == cube['L'][1][1]:
+            cube.rotate_sequence("RUR'URUUR'")
+            cube.view("z")
+            cube.rotate_sequence("L'U'LU'L'U'U'L")
+            return True
+        return False
+
+    def _case32(self, cube):
+        if cube['L'][0][1] == cube['F'][1][1] and cube['F'][0][1] == cube['R'][1][1] and cube['R'][0][1] == cube['L'][1][1]:
+            cube.rotate_sequence("L'U'LU'L'U'U'L")
+            cube.view("z")
+            cube.rotate_sequence("RUR'URUUR'")
+            return True
+        return False
+
     def up_cross_one(self, cube, desire, stage):
         '''
         将一个UF edge 进行还原。
@@ -990,6 +1055,8 @@ class LBLSolver(CubeSolver):
                 raise NotImplementedError("Some condition may not be implemented in solving middle layer")
 
     def solve_down_cross(self, cube):
+        if cube.is_down_cross_finished():
+            return
         if self._case20(cube):
             return
         if self._case21(cube):
@@ -998,6 +1065,8 @@ class LBLSolver(CubeSolver):
             return
 
     def solve_down_corner(self, cube):
+        if cube.is_down_corner_finished():
+            return
         if self._case23(cube):
             return
         if self._case24(cube):
@@ -1015,6 +1084,8 @@ class LBLSolver(CubeSolver):
         return
 
     def solve_down_corner_2(self, cube):
+        if cube.is_down_corner2_finished():
+            return
         if self._case30(cube):
             return
         cube.view("z'")
@@ -1030,7 +1101,40 @@ class LBLSolver(CubeSolver):
 
 
     def solve_down_edge(self, cube):
-        pass
+
+        def try_down_edge():
+            if cube.is_down_edge_finished():
+                return True
+            if cube.is_face_solved('L'):
+                cube.view("z")
+            if cube.is_face_solved('R'):
+                cube.view("z'")
+            if cube.is_face_solved('F'):
+                cube.view("z")
+                cube.view("z")
+            if cube.is_face_solved('B'):
+                if self._case31(cube):
+                    return True
+                if self._case32(cube):
+                    return True
+                print(cube)
+                raise NotImplementedError
+            return False
+
+        if try_down_edge():
+            cube.view("o")
+            return
+
+        cube.rotate_sequence("RUR'URUUR'")
+        cube.view("z")
+        cube.rotate_sequence("L'U'LU'L'U'U'L")
+
+
+        if try_down_edge():
+            cube.view("o")
+            return
+
+        raise NotImplementedError
 
     def solve(self, cube: Cube, inplace=False, steps=99):
         if not inplace:
@@ -1107,26 +1211,33 @@ def _create_step_ut(samples, seed, until_step, f_conditions):
         T = samples
         for i in trange(T):
             cube, steps = create_random_cube(seed=seed, return_op=True)
-            cube_c = cube.copy()
+            cube_c = cube.copy()   # The cube for turning
+            cube_f = cube.copy()   # The cube for applying the formula
             solver = LBLSolver()
 
             try:
                 solver.solve(cube_c, inplace=True, steps=until_step)
+                rec = cube_c.get_record()
+                cube_f.rotate_or_view_sequence(rec, record=False)
                 for cond in f_conditions:
                     if not cond(cube_c):
-                        raise ValueError
-                print(cube_c)
+                        raise ValueError("The cube is not solved as expected")
+                    if not cond(cube_f):
+                        raise ValueError("The record is not worked as expected though cube is solved")
 
             except ValueError as e:
                 print("=======Error Happens========")
                 print(str(e))
+                print("=======Original cube========")
                 print(cube)
-                print("=======See clearly==========")
+                print("=======See clearly of solving cube==========")
                 for k in range(4):
                     print(cube_c)
                     cube_c.view("z", record=False)
                     print("===========")
-                print("=======Rotate_sequence======")
+                print("=======Cloned cube======")
+                print(cube_f)
+                print("=======Rotate sequence======")
                 print(" ".join(steps))
                 print(" ".join(cube_c.get_record()))
                 break
@@ -1148,13 +1259,15 @@ def _ut_bottom_cross():
                                   Cube.is_down_cross_finished])
 
 def _ut_bottom_corner():
-    _create_step_ut(12000, 42, 5, [Cube.is_up_cross_finished, Cube.is_up_corner_finished, Cube.is_middle_layer_finished,
+    _create_step_ut(1000, 42, 5, [Cube.is_up_cross_finished, Cube.is_up_corner_finished, Cube.is_middle_layer_finished,
                                   Cube.is_down_cross_finished, Cube.is_down_corner_finished])
 
 def _ut_bottom_corner2():
     _create_step_ut(1000, 42, 6, [Cube.is_up_cross_finished, Cube.is_up_corner_finished, Cube.is_middle_layer_finished,
                                   Cube.is_down_cross_finished, Cube.is_down_corner_finished,
                                   Cube.is_down_corner2_finished])
+def _ut_all_solved():
+    _create_step_ut(100000, 42, 7, [Cube.is_all_solved])
 
 def _ut_basic_op():
     cube = create_random_cube(seed=43)
@@ -1170,7 +1283,8 @@ def regression_test():
     # _ut_middle_layer()
     # _ut_bottom_cross()
     # _ut_bottom_corner()
-    _ut_bottom_corner2()
+    # _ut_bottom_corner2()
+    _ut_all_solved()
 
 if __name__ == '__main__':
     regression_test()
