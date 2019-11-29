@@ -119,6 +119,8 @@ class Cube(object):
         self._rec = []   # All operations done to the cube, including turning the whole cube and for one step.
         self._op_label = {}  # The operation span. [string => tuple]
 
+        self._transaction_rec = []
+
     def __copy__(self):
         '''
         A deep copy of the cube object
@@ -129,6 +131,19 @@ class Cube(object):
         c._rec = self._rec.copy()
         c._op_label = self._op_label.copy()
         return c
+
+    def new_transaction(self):
+        self._transaction_rec = []
+
+    def commit(self):
+        self._rec.extend(self._transaction_rec)
+        self._transaction_rec.clear()
+
+    def get_transaction_cache(self):
+        return self._transaction_rec.copy()
+
+    def rollback(self):
+        self._transaction_rec.clear()
 
     def clear_record(self):
         self._rec.clear()
@@ -442,7 +457,7 @@ class Cube(object):
     def is_down_corner_finished(self):
         cp = self.copy()
         cp.view("o", record=False)
-        return cp['D'][0][0] == cp['D'][0][2] == cp['D'][2][0] == cp['D'][2][2]
+        return cp['D'][0][0] == cp['D'][0][2] == cp['D'][2][0] == cp['D'][2][2] == cp['D'][1][1]
 
     def is_down_corner2_finished(self):
         cp = self.copy()
@@ -792,6 +807,18 @@ class LBLSolver(CubeSolver):
             raise NotImplementedError("Please check implementation")
         return False
 
+    def _case19_1(self, cube):
+        # 中层两个调换的情况
+        if cube['F'][1][0] != cube['U'][1][1] and cube['L'][1][2] != cube['U'][1][1]:
+            # 这时候找到一个上面或前面含有U颜色的
+            for i in range(4):
+                if cube['F'][0][1] == cube['U'][1][1] or cube['U'][2][1] == cube['U'][1][1]:
+                    cube.push_back_record(shortcut('U', i))
+                    cube.rotate_sequence("U'L'ULUFU'F'")  # 上换左公式来一个
+                    return True
+                cube.rotate("U", record=False)
+        return False
+
     # For the down cross
     def _case20(self, cube):
         # 小拐角的情况
@@ -870,7 +897,7 @@ class LBLSolver(CubeSolver):
 
     def _case28(self, cube):  # 只有十字1
         for i in range(4):
-            if cube['U'][2][2] == cube['F'][0][0] == cube['B'][0][0] == cube['L'][0][0] == cube['U'][1][1]:
+            if cube['L'][0][2] == cube['R'][0][0] == cube['R'][0][2] == cube['U'][1][1]:
                 cube.push_back_record(shortcut('U', i))
                 cube.rotate_sequence("RUR'URUUR'")
                 return self._case23(cube)
@@ -879,12 +906,13 @@ class LBLSolver(CubeSolver):
 
     def _case29(self, cube):  # 只有十字2
         for i in range(4):
-            if cube['U'][2][0] == cube['F'][0][2] == cube['B'][0][2] == cube['R'][0][2] == cube['U'][1][1]:
+            if cube['L'][0][2] == cube['F'][0][2] == cube['U'][1][1]:
                 cube.push_back_record(shortcut('U', i))
                 cube.rotate_sequence("RUR'URUUR'")
                 return self._case23(cube)
             cube.rotate("U", record=False)
         return False
+
 
     # For the down corner of other faces, https://zhuanlan.zhihu.com/p/42331476
     def _case30(self, cube):
@@ -927,7 +955,7 @@ class LBLSolver(CubeSolver):
     def _case32(self, cube):
         if cube['L'][0][1] == cube['F'][1][1] and cube['F'][0][1] == cube['R'][1][1] and cube['R'][0][1] == cube['L'][1][1]:
             cube.rotate_sequence("L'U'LU'L'U'U'L")
-            cube.view("z")
+            cube.view("z'")
             cube.rotate_sequence("RUR'URUUR'")
             return True
         return False
@@ -1038,17 +1066,16 @@ class LBLSolver(CubeSolver):
         fail_cnt = 0    # If no operation happens after 4 rotations, we will know that some conditions are not covered
         while not cube.is_middle_layer_finished():
             if not (cube['L'][1][2] == cube['L'][1][1] and cube['F'][1][0] == cube['F'][1][1]):
-                b1 = self._case17(cube, cube['F'][1][1], cube['L'][1][1])
-                b2 = False
-                b3 = False
-                if not b1:
-                    b2 = self._case18(cube, cube['F'][1][1], cube['L'][1][1])
-                if not b1 and not b2:
-                    b3 = self._case19(cube, cube['F'][1][1], cube['L'][1][1])
-                if not b1 and not b2 and not b3:
-                    fail_cnt += 1
-                else:
+                if self._case17(cube, cube['F'][1][1], cube['L'][1][1]):
                     fail_cnt = 0
+                elif self._case18(cube, cube['F'][1][1], cube['L'][1][1]):
+                    fail_cnt = 0
+                elif self._case19(cube, cube['F'][1][1], cube['L'][1][1]):
+                    fail_cnt = 0
+                elif self._case19_1(cube):
+                    fail_cnt = 0
+                else:
+                    fail_cnt += 1
             cube.view("z")
             if fail_cnt == 4:
                 print(cube)
@@ -1084,21 +1111,21 @@ class LBLSolver(CubeSolver):
         return
 
     def solve_down_corner_2(self, cube):
-        if cube.is_down_corner2_finished():
-            return
-        if self._case30(cube):
-            return
-        cube.view("z'")
-        cube.view("y'")
-        cube.rotate_sequence("UURU'U'R'FF")
-        cube.rotate_sequence("U'U'L'UULF'F'")
-        cube.view("y")
-        cube.view("z")
-        if self._case30(cube):
-            return
-
-        raise NotImplementedError
-
+        fail_cnt = 0
+        while not cube.is_down_corner2_finished():
+            if self._case30(cube):
+                if cube.is_down_corner2_finished():
+                    return
+            else:
+                fail_cnt += 1
+                if fail_cnt > 3:
+                    raise ValueError("Too much failing in solving down corner. Optimize.")
+                cube.view("z'")
+                cube.view("y'")
+                cube.rotate_sequence("UURU'U'R'FF")
+                cube.rotate_sequence("U'U'L'UULF'F'")
+                cube.view("y")
+                cube.view("z")
 
     def solve_down_edge(self, cube):
 
@@ -1117,24 +1144,23 @@ class LBLSolver(CubeSolver):
                     return True
                 if self._case32(cube):
                     return True
-                print(cube)
                 raise NotImplementedError
+            cube.rotate_sequence("RUR'URUUR'")
+            cube.view("z")
+            cube.rotate_sequence("L'U'LU'L'U'U'L")
             return False
 
-        if try_down_edge():
-            cube.view("o")
-            return
+        fail_cnt = 0
+        while True:
+            try_down_edge()
+            if cube.is_all_solved():
+                break
+            else:
+                fail_cnt += 1
+                if fail_cnt > 5:
+                    raise ValueError("Fail time is too much. Optimize")
+        cube.view('o')
 
-        cube.rotate_sequence("RUR'URUUR'")
-        cube.view("z")
-        cube.rotate_sequence("L'U'LU'L'U'U'L")
-
-
-        if try_down_edge():
-            cube.view("o")
-            return
-
-        raise NotImplementedError
 
     def solve(self, cube: Cube, inplace=False, steps=99):
         if not inplace:
@@ -1183,8 +1209,7 @@ class KociembaSolver(CubeSolver):
         return ans
 
 # These are functions for unit test
-def create_random_cube(seed, return_op=False):
-    np.random.seed(seed)
+def create_random_cube(return_op=False):
     cube = Cube()
     q = np.random.randint(12, 20)
     seq = []
@@ -1207,10 +1232,11 @@ def is_valid_cube(cube):
 
 def _create_step_ut(samples, seed, until_step, f_conditions):
 
+    np.random.seed(seed)
     def _ut_fn():
         T = samples
         for i in trange(T):
-            cube, steps = create_random_cube(seed=seed, return_op=True)
+            cube, steps = create_random_cube(return_op=True)
             cube_c = cube.copy()   # The cube for turning
             cube_f = cube.copy()   # The cube for applying the formula
             solver = LBLSolver()
@@ -1218,7 +1244,7 @@ def _create_step_ut(samples, seed, until_step, f_conditions):
             try:
                 solver.solve(cube_c, inplace=True, steps=until_step)
                 rec = cube_c.get_record()
-                cube_f.rotate_or_view_sequence(rec, record=False)
+                cube_f.rotate_or_view_sequence(rec)
                 for cond in f_conditions:
                     if not cond(cube_c):
                         raise ValueError("The cube is not solved as expected")
@@ -1270,10 +1296,30 @@ def _ut_all_solved():
     _create_step_ut(100000, 42, 7, [Cube.is_all_solved])
 
 def _ut_basic_op():
-    cube = create_random_cube(seed=43)
+    np.random.seed(43)
+    cube = create_random_cube()
     print(cube)
     cube.view("y'")
     print(cube)
+
+def one_demo():
+    np.random.seed(42)
+    cube = create_random_cube()
+    solver = LBLSolver()
+    solver.solve(cube)
+    print(cube)
+    # print("===========Original cube===============")
+    # print(cube)
+    # stages = [solver.solve_up_cross, solver.solve_up_corner, solver.solve_middle_layer,
+    #           solver.solve_down_cross, solver.solve_down_corner, solver.solve_down_corner_2, solver.solve_down_edge]
+    # for i in range(len(stages)):
+    #     stages[i](cube)
+    #     print("===============Stage {} finished===============".format(i + 1))
+    #     print(cube)
+    # if cube.is_all_solved():
+    #     print("===============All done!==================")
+    # else:
+    #     print("==============Whoops!! Please Check!!!!!================")
 
 
 def regression_test():
@@ -1288,7 +1334,7 @@ def regression_test():
 
 if __name__ == '__main__':
     regression_test()
-
+    # one_demo()
 # UFBRLD
 # gwbgrgorw rybwoboyr yrybwrbgo ywgrwobyb wwywbbryg grooggooy
 # gwbgrgorwrybwoboyryrybwrbgoywgrwobybwwywbbryggrooggooy
