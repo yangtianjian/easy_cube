@@ -1063,6 +1063,8 @@ class LBLSolver(CubeSolver):
             cube.view('z')
 
     def solve_middle_layer(self, cube):
+        cube.view("x")
+        cube.view("x")
         fail_cnt = 0    # If no operation happens after 4 rotations, we will know that some conditions are not covered
         while not cube.is_middle_layer_finished():
             if not (cube['L'][1][2] == cube['L'][1][1] and cube['F'][1][0] == cube['F'][1][1]):
@@ -1159,7 +1161,7 @@ class LBLSolver(CubeSolver):
                 fail_cnt += 1
                 if fail_cnt > 5:
                     raise ValueError("Fail time is too much. Optimize")
-        cube.view('o')
+        cube.view('o', record=False)
 
 
     def solve(self, cube: Cube, inplace=False, steps=99):
@@ -1172,8 +1174,6 @@ class LBLSolver(CubeSolver):
         if steps >= 2:
             self.solve_up_corner(cube)
         if steps >= 3:
-            cube.view("x")
-            cube.view("x")
             self.solve_middle_layer(cube)
         if steps >= 4:
             self.solve_down_cross(cube)
@@ -1207,6 +1207,8 @@ class KociembaSolver(CubeSolver):
                     tmp[i] = tmp[i - 1]
             return "".join(tmp)
         return ans
+
+
 
 # These are functions for unit test
 def create_random_cube(return_op=False):
@@ -1303,23 +1305,23 @@ def _ut_basic_op():
     print(cube)
 
 def one_demo():
-    np.random.seed(42)
+    np.random.seed(22)
     cube = create_random_cube()
     solver = LBLSolver()
     solver.solve(cube)
+    print("===========Original cube===============")
     print(cube)
-    # print("===========Original cube===============")
-    # print(cube)
-    # stages = [solver.solve_up_cross, solver.solve_up_corner, solver.solve_middle_layer,
-    #           solver.solve_down_cross, solver.solve_down_corner, solver.solve_down_corner_2, solver.solve_down_edge]
-    # for i in range(len(stages)):
-    #     stages[i](cube)
-    #     print("===============Stage {} finished===============".format(i + 1))
-    #     print(cube)
-    # if cube.is_all_solved():
-    #     print("===============All done!==================")
-    # else:
-    #     print("==============Whoops!! Please Check!!!!!================")
+    stages = [solver.solve_up_cross, solver.solve_up_corner, solver.solve_middle_layer,
+              solver.solve_down_cross, solver.solve_down_corner, solver.solve_down_corner_2, solver.solve_down_edge]
+    for i in range(len(stages)):
+        stages[i](cube)
+        print("===============Stage {} finished===============".format(i + 1))
+        print(cube)
+    if cube.is_all_solved():
+        print("===============All done! The answer is: ==================")
+        print(" ".join(cube.get_record()))
+    else:
+        print("==============Whoops!! Please Check!!!!!================")
 
 
 def regression_test():
@@ -1333,8 +1335,8 @@ def regression_test():
     _ut_all_solved()
 
 if __name__ == '__main__':
-    regression_test()
-    # one_demo()
+    # regression_test()
+    one_demo()
 # UFBRLD
 # gwbgrgorw rybwoboyr yrybwrbgo ywgrwobyb wwywbbryg grooggooy
 # gwbgrgorwrybwoboyryrybwrbgoywgrwobybwwywbbryggrooggooy
