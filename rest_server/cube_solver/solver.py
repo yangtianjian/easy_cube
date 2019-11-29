@@ -165,6 +165,9 @@ class Cube(object):
         else:
             raise ValueError("The record should either be string or list")
 
+    def pop_back_record(self):
+        return self._rec.pop()
+
     def to_kociemba_compatible_string(self):
         '''
         The kociemba library has different face map. We have to do rearrangement and flatten the array to string.
@@ -1046,6 +1049,8 @@ class LBLSolver(CubeSolver):
         :param cube:
         :return:
         '''
+        if cube.is_up_cross_finished():
+            return
         for i in range(4):
             self.up_cross_one(cube, cube['F'][1][1], i)
             cube.view('z')
@@ -1056,6 +1061,8 @@ class LBLSolver(CubeSolver):
         :param cube:
         :return:
         '''
+        if cube.is_up_corner_finished():
+            return
         for i in range(4):
             desire_l = cube['L'][1][1]
             desire_f = cube['F'][1][1]
@@ -1074,14 +1081,20 @@ class LBLSolver(CubeSolver):
                     fail_cnt = 0
                 elif self._case19(cube, cube['F'][1][1], cube['L'][1][1]):
                     fail_cnt = 0
-                elif self._case19_1(cube):
-                    fail_cnt = 0
                 else:
                     fail_cnt += 1
-            cube.view("z")
             if fail_cnt == 4:
-                print(cube)
-                raise NotImplementedError("Some condition may not be implemented in solving middle layer")
+                cube.pop_back_record()   # Pop four 'z' rotations
+                cube.pop_back_record()
+                cube.pop_back_record()
+                cube.pop_back_record()
+                if self._case19_1(cube):
+                    fail_cnt = 0
+                else:
+                    print(cube)
+                    raise NotImplementedError("Some condition may not be implemented in solving middle layer")
+            else:
+                cube.view("z")
 
     def solve_down_cross(self, cube):
         if cube.is_down_cross_finished():
@@ -1305,8 +1318,10 @@ def _ut_basic_op():
     print(cube)
 
 def one_demo():
-    np.random.seed(22)
+    np.random.seed(20)
     cube = create_random_cube()
+    # cube = Cube()
+    # cube.rotate_sequence("LL", record=False)
     solver = LBLSolver()
     solver.solve(cube)
     print("===========Original cube===============")
@@ -1315,7 +1330,7 @@ def one_demo():
               solver.solve_down_cross, solver.solve_down_corner, solver.solve_down_corner_2, solver.solve_down_edge]
     for i in range(len(stages)):
         stages[i](cube)
-        print("===============Stage {} finished===============".format(i + 1))
+        print("===============Stage {} finished. {} steps.===============".format(i + 1, len(cube.get_record())))
         print(cube)
     if cube.is_all_solved():
         print("===============All done! The answer is: ==================")
