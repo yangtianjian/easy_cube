@@ -411,6 +411,15 @@ class Cube(object):
         cp.view("o", record=False)
         return cp['D'][0][0] == cp['D'][0][2] == cp['D'][2][0] == cp['D'][2][2]
 
+    def is_down_corner2_finished(self):
+        cp = self.copy()
+        cp.view("o", record=False)
+        for i in range(4):
+            if not (cp['F'][1][1] == cp['F'][0][0] == cp['F'][0][2]):
+                return False
+            cp.view("z")
+        return True
+
 
     def __getitem__(self, item):
         if item in ['L', 'R', 'U', 'D', 'F', 'B']:
@@ -786,6 +795,10 @@ class LBLSolver(CubeSolver):
                 cube.push_back_record(shortcut('U', i))
                 cube.rotate_sequence("RUR'URUUR'")
                 return self._case24(cube)
+            if cube['U'][2][0] == cube['U'][0][2] == cube['L'][0][0] == cube['F'][0][2] == cube['U'][1][1]:
+                cube.push_back_record(shortcut('U', i))
+                cube.rotate_sequence("L'U'LU'L'U'U'L")
+                return self._case23(cube)
             cube.rotate("U", record=False)
         return False
 
@@ -825,6 +838,34 @@ class LBLSolver(CubeSolver):
             cube.rotate("U", record=False)
         return False
 
+    # For the down corner of other faces, https://zhuanlan.zhihu.com/p/42331476
+    def _case30(self, cube):
+        for i in range(4):
+            if cube['L'][0][0] == cube['L'][0][2] == cube['L'][1][1]:
+                cube.view("z'")
+            if cube['R'][0][0] == cube['R'][0][2] == cube['R'][1][1]:
+                cube.view("z")
+            if cube['B'][0][0] == cube['B'][0][2] == cube['B'][1][1]:
+                cube.view("z")
+                cube.view("z")
+            if cube['F'][0][0] == cube['F'][0][2] == cube['F'][1][1]:  # Above three conditions will fall through to here
+                cube.push_back_record(shortcut('U', i))
+                cube.view("z'")
+                cube.view("y'")
+                cube.rotate_sequence("UURU'U'R'FF")
+                cube.rotate_sequence("U'U'L'UULF'F'")
+                cube.view("y")
+                cube.view("z")
+                for j in range(4):
+                    if not (cube['F'][0][0] == cube['F'][2][2] == cube['F'][1][1]):
+                        cube.rotate("U", record=False)
+                    else:
+                        cube.push_back_record(shortcut('U', j))
+                        return True
+                print(cube)
+                raise NotImplementedError
+            cube.rotate("U", record=False)
+        return False
 
     def up_cross_one(self, cube, desire, stage):
         '''
@@ -950,32 +991,43 @@ class LBLSolver(CubeSolver):
 
     def solve_down_cross(self, cube):
         if self._case20(cube):
-            return True
+            return
         if self._case21(cube):
-            return True
+            return
         if self._case22(cube):
-            return True
-        return False
+            return
 
     def solve_down_corner(self, cube):
         if self._case23(cube):
-            return True
+            return
         if self._case24(cube):
-            return True
+            return
         if self._case25(cube):
-            return True
+            return
         if self._case26(cube):
-            return True
+            return
         if self._case27(cube):
-            return True
+            return
         if self._case28(cube):
-            return True
+            return
         if self._case29(cube):
-            return True
-        return False
+            return
+        return
 
     def solve_down_corner_2(self, cube):
-        pass
+        if self._case30(cube):
+            return
+        cube.view("z'")
+        cube.view("y'")
+        cube.rotate_sequence("UURU'U'R'FF")
+        cube.rotate_sequence("U'U'L'UULF'F'")
+        cube.view("y")
+        cube.view("z")
+        if self._case30(cube):
+            return
+
+        raise NotImplementedError
+
 
     def solve_down_edge(self, cube):
         pass
@@ -1049,127 +1101,76 @@ def is_valid_cube(cube):
     return np.all(np.bincount(arr.reshape((-1, ))) == 9)
 
 
+def _create_step_ut(samples, seed, until_step, f_conditions):
+
+    def _ut_fn():
+        T = samples
+        for i in trange(T):
+            cube, steps = create_random_cube(seed=seed, return_op=True)
+            cube_c = cube.copy()
+            solver = LBLSolver()
+
+            try:
+                solver.solve(cube_c, inplace=True, steps=until_step)
+                for cond in f_conditions:
+                    if not cond(cube_c):
+                        raise ValueError
+                print(cube_c)
+
+            except ValueError as e:
+                print("=======Error Happens========")
+                print(str(e))
+                print(cube)
+                print("=======See clearly==========")
+                for k in range(4):
+                    print(cube_c)
+                    cube_c.view("z", record=False)
+                    print("===========")
+                print("=======Rotate_sequence======")
+                print(" ".join(steps))
+                print(" ".join(cube_c.get_record()))
+                break
+    return _ut_fn()
+
 def _ut_up_cross():
-    T = 1000
-    for i in trange(T):
-        cube = create_random_cube(seed=41)
-        cube_c = cube.copy()
-        solver = LBLSolver()
-        solver.solve(cube_c, inplace=True, steps=1)
-        if not cube_c.is_up_cross_finished():
-            print("=======Error Happens========")
-            print(cube)
-            print("=======See clearly==========")
-            print(cube_c)
-            break
+    _create_step_ut(1000, 42, 1, [Cube.is_up_cross_finished])
 
 def _ut_up_corner():
-    T = 1000
-    for i in trange(T):
-        cube = create_random_cube(seed=43)
-        cube_c = cube.copy()
-        solver = LBLSolver()
+    _create_step_ut(1000, 42, 2, [Cube.is_up_cross_finished, Cube.is_up_corner_finished])
 
-        solver.solve(cube_c, inplace=True, steps=2)
-        if not (cube_c.is_up_cross_finished() and cube_c.is_up_corner_finished() and is_valid_cube(cube_c)):
-            print("=======Error Happens========")
-            print(cube)
-            print("=======See clearly==========")
-            print(cube_c)
-            break
 
 def _ut_middle_layer():
-    T = 1000
-    for i in trange(T):
-        cube, steps = create_random_cube(seed=43, return_op=True)
-        cube_c = cube.copy()
-        solver = LBLSolver()
-
-        try:
-            solver.solve(cube_c, inplace=True, steps=3)
-            if not (cube_c.is_up_cross_finished() and cube_c.is_up_corner_finished() and cube_c.is_middle_layer_finished()):
-                raise ValueError
-        except ValueError as e:
-            print("=======Error Happens========")
-            print(str(e))
-            print(cube)
-            print("=======See clearly==========")
-            for k in range(4):
-                print(cube_c)
-                cube_c.view("z", record=False)
-                print("===========")
-            print("=======Rotate_sequence======")
-            print(" ".join(steps))
-            print(" ".join(cube_c.get_record()))
-            break
+    _create_step_ut(1000, 42, 3, [Cube.is_up_cross_finished, Cube.is_up_corner_finished, Cube.is_middle_layer_finished])
 
 
 def _ut_bottom_cross():
-    T = 1000
-    for i in trange(T):
-        cube, steps = create_random_cube(seed=43, return_op=True)
-        cube_c = cube.copy()
-        solver = LBLSolver()
-
-        try:
-            solver.solve(cube_c, inplace=True, steps=4)
-            if not (cube_c.is_up_cross_finished() and cube_c.is_up_corner_finished() and cube_c.is_middle_layer_finished()
-            and cube_c.is_down_cross_finished()):
-                raise ValueError
-        except ValueError as e:
-            print("=======Error Happens========")
-            print(str(e))
-            print(cube)
-            print("=======See clearly==========")
-            for k in range(4):
-                print(cube_c)
-                cube_c.view("z", record=False)
-                print("===========")
-            print("=======Rotate_sequence======")
-            print(" ".join(steps))
-            print(" ".join(cube_c.get_record()))
-            break
+    _create_step_ut(1000, 43, 4, [Cube.is_up_cross_finished, Cube.is_up_corner_finished, Cube.is_middle_layer_finished,
+                                  Cube.is_down_cross_finished])
 
 def _ut_bottom_corner():
-    T = 1000
-    for i in trange(T):
-        cube, steps = create_random_cube(seed=43, return_op=True)
-        cube_c = cube.copy()
-        solver = LBLSolver()
+    _create_step_ut(12000, 42, 5, [Cube.is_up_cross_finished, Cube.is_up_corner_finished, Cube.is_middle_layer_finished,
+                                  Cube.is_down_cross_finished, Cube.is_down_corner_finished])
 
-        try:
-            solver.solve(cube_c, inplace=True, steps=5)
-            if not (cube_c.is_up_cross_finished() and cube_c.is_up_corner_finished() and cube_c.is_middle_layer_finished()
-            and cube_c.is_down_cross_finished() and cube_c.is_down_corner_finished()):
-                raise ValueError
-        except ValueError as e:
-            print("=======Error Happens========")
-            print(str(e))
-            print(cube)
-            print("=======See clearly==========")
-            for k in range(4):
-                print(cube_c)
-                cube_c.view("z", record=False)
-                print("===========")
-            print("=======Rotate_sequence======")
-            print(" ".join(steps))
-            print(" ".join(cube_c.get_record()))
-            break
+def _ut_bottom_corner2():
+    _create_step_ut(1000, 42, 6, [Cube.is_up_cross_finished, Cube.is_up_corner_finished, Cube.is_middle_layer_finished,
+                                  Cube.is_down_cross_finished, Cube.is_down_corner_finished,
+                                  Cube.is_down_corner2_finished])
 
 def _ut_basic_op():
     cube = create_random_cube(seed=43)
     print(cube)
-    cube.view("x")
+    cube.view("y'")
     print(cube)
 
 
 def regression_test():
     # _ut_basic_op()
-    _ut_up_cross()
-    _ut_up_corner()
-    _ut_middle_layer()
-    _ut_bottom_cross()
-    _ut_bottom_corner()
+    # _ut_up_cross()
+    # _ut_up_corner()
+    # _ut_middle_layer()
+    # _ut_bottom_cross()
+    # _ut_bottom_corner()
+    _ut_bottom_corner2()
 
 if __name__ == '__main__':
     regression_test()
