@@ -139,6 +139,12 @@ class Cube(object):
             raise ValueError("The cube is not valid")
         return cube
 
+    def to_json_object(self):
+        d = dict()
+        for i, v in enumerate(['D', 'R', 'B', 'U', 'L', 'F']):
+            d[v] = self._c[i].reshape((-1,)).tolist()
+        return d
+
     def __copy__(self):
         '''
         A deep copy of the cube object
@@ -1285,11 +1291,11 @@ class KociembaSolver(CubeSolver):
             return ""
         ans = kociemba.solve(cube.to_kociemba_compatible_string(), self.terminal.to_kociemba_compatible_string())
         if not self._single_step_format:
-            tmp = list(ans)
+            tmp = ans.split(" ")
             for i in range(1, len(tmp)):
                 if tmp[i] == '2':
                     tmp[i] = tmp[i - 1]
-            return "".join(tmp)
+            return tmp
         return ans
 
 
@@ -1442,8 +1448,8 @@ def regression_test():
     # _ut_bottom_cross()
     # _ut_bottom_corner()
     # _ut_bottom_corner2()
-    # _ut_all_solved()
-    _ut_mirror()
+    _ut_all_solved()
+    # _ut_mirror()
 
 if __name__ == '__main__':
     regression_test()
