@@ -5,6 +5,7 @@ import kociemba
 import pycuber as pc
 from deprecated import deprecated
 from tqdm import tqdm, trange
+import json
 
 
 def get_face_map():
@@ -117,9 +118,26 @@ class Cube(object):
             raise ValueError("The cube string must be either string or ndarray")
 
         self._rec = []   # All operations done to the cube, including turning the whole cube and for one step.
-        self._op_label = {}  # The operation span. [string => tuple]
+        self._op_label = []  # The operation span. [string => tuple] e.g.  ("step", 0, 3)
 
         self._transaction_rec = []
+
+    def _check_valid_with_kociemba(self):
+        try:
+            kociemba.solve(self.to_kociemba_compatible_string())
+            return True
+        except ValueError as e:
+            return False
+
+    @staticmethod
+    def from_json(json_):
+        if isinstance(json_, str):
+            json_ = json.loads(json_)
+        arr_ = np.stack([np.array(json_[x]).reshape(3, 3) for x in ['D', 'R', 'B', 'U', 'L', 'F']], axis=0)
+        cube = Cube(initial_color=arr_)
+        if not cube._check_valid_with_kociemba():
+            raise ValueError("The cube is not valid")
+        return cube
 
     def __copy__(self):
         '''
@@ -1196,6 +1214,7 @@ class LBLSolver(CubeSolver):
             self.solve_down_corner_2(cube)
         if steps >= 7:
             self.solve_down_edge(cube)
+        return cube
 
 
 class KociembaSolver(CubeSolver):
@@ -1319,13 +1338,15 @@ def _ut_basic_op():
 
 def one_demo():
     np.random.seed(20)
-    cube = create_random_cube()
+    cube, ops = create_random_cube(return_op=True)
     # cube = Cube()
     # cube.rotate_sequence("LL", record=False)
     solver = LBLSolver()
     solver.solve(cube)
     print("===========Original cube===============")
     print(cube)
+    print("===========Sequence===========")
+    print(" ".join(ops))
     stages = [solver.solve_up_cross, solver.solve_up_corner, solver.solve_middle_layer,
               solver.solve_down_cross, solver.solve_down_corner, solver.solve_down_corner_2, solver.solve_down_edge]
     for i in range(len(stages)):
