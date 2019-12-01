@@ -172,6 +172,41 @@ class Cube(object):
     def get_record(self):
         return self._rec.copy()
 
+    def get_mirroring_record(self):
+
+        '''
+         U
+        LFRB   => ULFRBD
+         D
+        :return:
+        '''
+        def mirror(arr, rot):
+            mirror_map = {
+                "x":  [4, 1, 0, 3, 5, 2],
+                "x'": [2, 1, 5, 3, 0, 4],
+                "y":  [1, 5, 2, 0, 4, 3],
+                "y'": [3, 0, 2, 5, 4, 1],
+                "z":  [0, 2, 3, 4, 1, 5],
+                "z'": [0, 4, 1, 2, 3, 5]
+            }
+            return arr[mirror_map[rot]]
+
+        ret = []
+        mirror_map = ['U', 'L', 'F', 'R', 'B', 'D']
+        inv_mirror_map = dict((k, i) for i, k in enumerate(mirror_map))
+        cur_mirror = np.arange(6)
+        for r in self._rec:
+            if r[0] in ['x', 'y', 'z']:
+                cur_mirror = mirror(cur_mirror, r)
+                ret.append(r)
+            else:
+                trans_r = mirror_map[cur_mirror[inv_mirror_map[r[0]]]]
+                if len(r) > 1 and r[1] == "'":
+                    ret.append(trans_r + "'")
+                else:
+                    ret.append(trans_r)
+        return ret
+
     def get_op_label(self):
         return self._op_label.copy()
 
@@ -1377,6 +1412,27 @@ def one_demo():
     else:
         print("==============Whoops!! Please Check!!!!!================")
 
+def _ut_mirror():
+    np.random.seed(42)
+    T = 10000
+    for t in trange(T):
+        cube1 = create_random_cube()
+        cube2 = cube1.copy()
+        solver = LBLSolver()
+        solver.solve(cube1, inplace=True)
+        rec = cube1.get_mirroring_record()
+        for r in rec:
+            if r[0] not in ['x', 'y', 'z']:
+                cube2.rotate(r, record=False)
+        if cube1 != cube2:
+            print("=======Error happens========")
+            print(cube1)
+            print("=======Cloned cube==========")
+            print(cube2)
+            print("=======Result===============")
+            print(" ".join(rec))
+            raise ValueError("Test mirror implementation error")
+
 
 def regression_test():
     # _ut_basic_op()
@@ -1386,11 +1442,9 @@ def regression_test():
     # _ut_bottom_cross()
     # _ut_bottom_corner()
     # _ut_bottom_corner2()
-    _ut_all_solved()
+    # _ut_all_solved()
+    _ut_mirror()
 
 if __name__ == '__main__':
-    # regression_test()
-    one_demo()
-# UFBRLD
-# gwbgrgorw rybwoboyr yrybwrbgo ywgrwobyb wwywbbryg grooggooy
-# gwbgrgorwrybwoboyryrybwrbgoywgrwobybwwywbbryggrooggooy
+    regression_test()
+    # one_demo()
