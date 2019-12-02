@@ -36,6 +36,9 @@ def get_inv_lbl_wrapper_face_map():
     fm = get_lbl_wrapper_face_map()
     return dict([(v, k) for k, v in fm.items()])
 
+def reverse_formula(formula_list):
+    return [x[0] if len(x) > 1 and x.endswith("'") else x + "'" for x in reversed(formula_list)]
+
 def shortcut(op, times):
     if times <= 2:
         return [op] * times
@@ -71,6 +74,7 @@ def get_face_rel():
 
 def print_(x):
     print(x, end='')
+
 
 
 class Cube(object):

@@ -141,7 +141,7 @@ class ConvolutionalDetector(BaseEstimator, TransformerMixin):
     @staticmethod
     def load(file_name, device):
         with open(file_name, 'rb') as f:
-            model_ = torch.load(f, map_location=device)
+            model_ = joblib.load(f)
             model_.device = device
         return model_
 
@@ -209,6 +209,7 @@ class ConvolutionalDetector(BaseEstimator, TransformerMixin):
             avg_acc /= iteration
             self.acc_curve.append(avg_acc)
 
+        model.to('cpu')
         self.model = model
         self.state = True
 
@@ -262,7 +263,7 @@ if __name__ == '__main__':
     ap = argparse.ArgumentParser()
     ap.add_argument("-bl", "--block_label", default='./label/label_block.tsv')
     ap.add_argument("-cbd", "--clipped_block_dir", default='clipped_color_blocks')
-    ap.add_argument("-dim", "--block_width", default=28)
+    ap.add_argument("-dim", "--block_width", default=32)
     ap.add_argument('-md', "--model_dir", default='./models')
     ap.add_argument('-lc', "--loss_curve", default=True)
 
@@ -296,8 +297,6 @@ if __name__ == '__main__':
     cv_results = model.cv_results_
     with open(os.path.join(model_dir, 'cv_result.txt'), 'w') as f:
         f.write(str(cv_results))
-
-    best_model.model.to('cpu')
     with open(os.path.join(model_dir, 'best_model'), 'wb') as f:
         torch.save(best_model, f)
     print("Finish. Plotting the curve")
