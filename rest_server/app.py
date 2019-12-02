@@ -8,8 +8,7 @@ urls = (
     '/solve_lbl', 'SolveLBL',
     '/solve_koci', 'SolveKoci',
     '/recognize', 'RecognizeColor',
-    '/teach', 'Teach',
-    '/exam', 'Exam'
+    '/generate', 'Generate'
 )
 
 color_detector = CNNModel()
@@ -175,7 +174,7 @@ class RecognizeColor():
             img_data = data['picture'][face]
             img_arr = []
             for k in ['B', 'G', 'R']:
-                channel_data = np.array(img_data['k'])
+                channel_data = np.array(img_data[k])
                 channel_data = channel_data.reshape(data['picture']['height'], data['picture']['width'])
                 img_arr.append(channel_data)
             img_arr = np.stack(img_arr, axis=0)
@@ -197,6 +196,35 @@ class RecognizeColor():
                 "cube": {},
                 "trans": []
             }
+
+class Generate():
+    '''
+    生成一个魔方"问题"。对于公式专项练习，随机种子固定
+    目前有这几个公式的教学：
+    1. 右手中棱归位
+    2. 左手中棱归位
+    3. 底层十字
+    4. 底面复原
+    5. 底棱复原（最终复原）
+    {
+        "program": 1,    # 第几步的专项练习
+        "case": 1,       # 第几种情况的专项练习
+    }
+
+    :return {
+        "success": True , # 如果是False, 有可能是前端给的情况编号出现错误
+        "cube": {
+            "U": [],
+            "D": []
+            ...
+        },
+        "trans": []       # 如何从原始状态达到这一步
+    }
+    '''
+
+
+    def POST(self):
+        pass
 
 
 if __name__ == '__main__':
