@@ -658,57 +658,57 @@ class LBLSolver(CubeSolver):
         super(LBLSolver, self).__init__()
 
     # For up cross
-    def _case1(self, cube, desire):
+    def _case1(self, cube, desire, name_scope="case_1"):
         for i in range(4):  # U on the left
             if cube['L'][2][1] == self._face_map['U'] and cube['D'][1][0] == desire:
-                cube._push_back_record(shortcut('L', i), label='up_cross/case_1/solution')
-                cube.rotate_sequence("L'FL", record="up_cross/case_1/solution")
-                cube.rotate_sequence(shortcut("L'", i), record='up_cross/case_1/solution')  # avoid messing up
+                cube._push_back_record(shortcut('L', i), label='up_cross/{}/transition'.format(name_scope))
+                cube.rotate_sequence("L'FL", record="up_cross/{}/solution".format(name_scope))
+                cube.rotate_sequence(shortcut("L'", i), record='up_cross/{}/solution'.format(name_scope))  # avoid messing up
                 return True
             cube.rotate('L', record=False)   # For covering other cases
         return False
 
-    def _case2(self, cube, desire):
+    def _case2(self, cube, desire, name_scope="case_2"):
         for i in range(4): # U on the right
             if cube['R'][2][1] == self._face_map['U'] and cube['D'][1][2] == desire:
-                cube._push_back_record(shortcut('R', i), label='up_cross/case_2/solution')
-                cube.rotate_sequence("RF'R'", record="up_cross/case_2/solution")
-                cube.rotate_sequence(shortcut("R'", i), record='up_cross/case_2/solution')  # avoid messing up
+                cube._push_back_record(shortcut('R', i), label='up_cross/{}/transition'.format(name_scope))
+                cube.rotate_sequence("RF'R'", record="up_cross/{}/solution".format(name_scope))
+                cube.rotate_sequence(shortcut("R'", i), record='up_cross/{}/solution'.format(name_scope))  # avoid messing up
                 return True
             cube.rotate('R', record=False)   # For covering other cases
         return False
 
-    def _case3(self, cube, desire):
+    def _case3(self, cube, desire, name_scope="case_3"):
         for i in range(4): # U on the front
             if cube['F'][2][1] == self._face_map['U'] and cube['D'][0][1] == desire:
-                cube._push_back_record(shortcut('F', i), label='up_cross/case_3/solution')
-                cube.rotate_sequence("DRF'R'", record='up_cross/case_3/solution')
+                cube._push_back_record(shortcut('F', i), label='up_cross/{}/transition'.format(name_scope))
+                cube.rotate_sequence("DRF'R'", record='up_cross/{}/solution'.format(name_scope))
                 return True
             cube.rotate('F', record=False)   # For covering other cases
         return False
 
-    def _case4(self, cube, desire):
+    def _case4(self, cube, desire, name_scope="case_4"):
         for i in range(4): # U on the back
             if cube['B'][2][1] == self._face_map['U'] and cube['D'][2][1] == desire:
-                cube._push_back_record(shortcut('B', i), label='up_cross/case_4/solution')
-                cube.rotate_sequence("D", record='up_cross/case_4/solution')
-                cube.rotate_sequence(shortcut("B'", i), record="up_cross/case_4/solution")  # prevent from messing the others
-                cube.rotate_sequence("L'FL", record="up_cross/case_4/solution")
+                cube._push_back_record(shortcut('B', i), label='up_cross/{}/transition'.format(name_scope))
+                cube.rotate_sequence("D", record='up_cross/{}/solution'.format(name_scope))
+                cube.rotate_sequence(shortcut("B'", i), record="up_cross/{}/solution".format(name_scope))  # prevent from messing the others
+                cube.rotate_sequence("L'FL", record="up_cross/{}/solution".format(name_scope))
                 return True
             cube.rotate('B', record=False)   # For covering other cases
         return False
 
-    def _case5(self, cube, desire):
+    def _case5(self, cube, desire, name_scope="case_5"):
         for i in range(4): # U on the down side
             if cube['D'][0][1] == self._face_map['U'] and cube['F'][2][1] == desire:
-                cube._push_back_record(shortcut('D', i), label='up_cross/case_5/solution')
-                cube.rotate_sequence("FF", record='up_cross/case_5/solution')
+                cube._push_back_record(shortcut('D', i), label='up_cross/{}/solution'.format(name_scope))
+                cube.rotate_sequence("FF", record='up_cross/{}/solution'.format(name_scope))
                 return True
             cube.rotate('D', record=False)
         return False
 
     # For up corners
-    def _case6(self, cube, desire_f, desire_l):
+    def _case6(self, cube, desire_f, desire_l, name_scope="case_1"):
         '''
         可以通过D操作达到c['L'][2][2] = 'U' 且的情况
         :param cube:
@@ -719,13 +719,13 @@ class LBLSolver(CubeSolver):
         for i in range(4):
             if cube['L'][2][2] == self._face_map['U'] and cube['F'][2][0] == desire_f and \
                     cube['D'][0][0] == desire_l:
-                cube._push_back_record(shortcut('D', i), label='up_corner/case_6/solution')
-                cube.rotate_sequence("D'F'DF", record="up_corner/case_6/solution")
+                cube._push_back_record(shortcut('D', i), label='up_corner/{}/transition'.format(name_scope))
+                cube.rotate_sequence("D'F'DF", record="up_corner/{}/solution".format(name_scope))
                 return True
             cube.rotate('D', record=False)
         return False
 
-    def _case7(self, cube, desire_f, desire_l):
+    def _case7(self, cube, desire_f, desire_l, name_scope="case_2"):
         '''
         可以通过D操作达到c['F'][2][0] = 'U' 且的情况
         :param cube:
@@ -736,13 +736,13 @@ class LBLSolver(CubeSolver):
         for i in range(4):
             if cube['F'][2][0] == self._face_map['U'] and cube['L'][2][2] == desire_l and \
                     cube['D'][0][0] == desire_f:
-                cube._push_back_record(shortcut('D', i), label='up_corner/case_7/solution')
-                cube.rotate_sequence("DLD'L'", record='up_corner/case_7/solution')
+                cube._push_back_record(shortcut('D', i), label='up_corner/{}/solution'.format(name_scope))
+                cube.rotate_sequence("DLD'L'", record='up_corner/{}/solution'.format(name_scope))
                 return True
             cube.rotate('D', record=False)
         return False
 
-    def _case8(self, cube, desire_f, desire_l):
+    def _case8(self, cube, desire_f, desire_l, name_scope="case_3"):
         '''
         经过D操作可以将U带到c['D'][0][0]
         :param cube:
@@ -753,14 +753,14 @@ class LBLSolver(CubeSolver):
         for i in range(4):
             if cube['D'][0][0] == self._face_map['U'] and cube['L'][2][2] == desire_f and \
                     cube['F'][2][0] == desire_l:
-                cube._push_back_record(shortcut('D', i), label='up_corner/case_8/solution')
-                cube.rotate_sequence("F'D'D'FD", record="up_corner/case_8/solution")
-                self._case7(cube, desire_f, desire_l)
+                cube._push_back_record(shortcut('D', i), label='up_corner/{}/solution'.format(name_scope))
+                cube.rotate_sequence("F'D'D'FD", record="up_corner/{}/solution".format(name_scope))
+                self._case7(cube, desire_f, desire_l, name_scope=name_scope + "_case_2")
                 return True
             cube.rotate('D', record=False)
         return False
 
-    def _case9(self, cube, desire_f, desire_l):
+    def _case9(self, cube, desire_f, desire_l, name_scope="case_4"):
         '''
         c['L'][0][2] = 'U' and c['F'][0][0] = desire_l and c['U'][2][0] = desire_f
         :param cube:
@@ -769,11 +769,11 @@ class LBLSolver(CubeSolver):
         :return:
         '''
         if cube['L'][0][2] == self._face_map['U'] and cube['F'][0][0] == desire_l and cube['U'][2][0] == desire_f:
-            cube.rotate_sequence("LDL'D'", record="up_corner/case_9/solution")
-            return self._case6(cube, desire_f, desire_l)
+            cube.rotate_sequence("LDL'D'", record="up_corner/{}/solution".format(name_scope))
+            return self._case6(cube, desire_f, desire_l, name_scope=name_scope + "_case_1")
 
 
-    def _case10(self, cube, desire_f, desire_l):
+    def _case10(self, cube, desire_f, desire_l, name_scope="case_5"):
         '''
         对角调换的情况
         :param cube:
@@ -782,10 +782,10 @@ class LBLSolver(CubeSolver):
         :return:
         '''
         if cube['U'][0][2] == self._face_map['U'] and cube['R'][0][2] == desire_l and cube['B'][0][0] == desire_f:
-            cube.rotate_sequence("B'D'D'B", record='up_corner/case_10/solution')
-            return self._case6(cube, desire_f, desire_l)
+            cube.rotate_sequence("B'D'D'B", record='up_corner/{}/solution'.format(name_scope))
+            return self._case6(cube, desire_f, desire_l, name_scope=name_scope + "_case_1")
 
-    def _case11(self, cube, desire_f, desire_l):
+    def _case11(self, cube, desire_f, desire_l, name_scope="case_6"):
         '''
         与后面的邻角调换的情况
         :param cube:
@@ -794,10 +794,10 @@ class LBLSolver(CubeSolver):
         :return:
         '''
         if cube['U'][0][0] == self._face_map['U'] and cube['L'][0][0] == desire_f and cube['B'][0][2] == desire_l:
-            cube.rotate_sequence("L'DLD", record="up_corner/case_11/solution")
-            return self._case7(cube, desire_f, desire_l)
+            cube.rotate_sequence("L'DLD", record="up_corner/{}/solution".format(name_scope))
+            return self._case7(cube, desire_f, desire_l, name_scope=name_scope + "_case_2")
 
-    def _case12(self, cube, desire_f, desire_l):
+    def _case12(self, cube, desire_f, desire_l, name_scope="case_7"):
         '''
         与右面的邻角调换的情况
         :param cube:
@@ -806,10 +806,10 @@ class LBLSolver(CubeSolver):
         :return:
         '''
         if cube['U'][2][2] == self._face_map['U'] and cube['F'][0][2] == desire_l and cube['R'][0][0] == desire_f:
-            cube.rotate_sequence("R'D'R", record="up_corner/case_12/solution")
-            return self._case6(cube, desire_f, desire_l)
+            cube.rotate_sequence("R'D'R", record="up_corner/{}/solution".format(name_scope))
+            return self._case6(cube, desire_f, desire_l, name_scope=name_scope + "_case_1")
 
-    def _case13(self, cube, desire_f, desire_l):
+    def _case13(self, cube, desire_f, desire_l, name_scope="case_8"):
         '''
         U在FR上排的情况
         :param cube:
@@ -818,13 +818,13 @@ class LBLSolver(CubeSolver):
         :return:
         '''
         if cube['F'][0][2] == self._face_map['U'] and cube['U'][2][2] == desire_f and cube['R'][0][0] == desire_l: # 右面邻角的前面
-            cube.rotate_sequence("R'D'R", record="up_corner/case_13_L/solution")
-            return self._case8(cube, desire_f, desire_l)
+            cube.rotate_sequence("R'D'R", record="up_corner/{}/solution".format(name_scope))
+            return self._case8(cube, desire_f, desire_l, name_scope=name_scope + "_case_3")
         if cube['R'][0][0] == self._face_map['U'] and cube['F'][0][2] == desire_f and cube['U'][2][2] == desire_l: # 右面邻角的右面
-            cube.rotate_sequence("R'D'R", record="up_corner/case_13_R/solution")
-            return self._case7(cube, desire_f, desire_l)
+            cube.rotate_sequence("R'D'R", record="up_corner/{}/solution".format(name_scope))
+            return self._case7(cube, desire_f, desire_l, name_scope=name_scope + "_case_2")
 
-    def _case14(self, cube, desire_f, desire_l):
+    def _case14(self, cube, desire_f, desire_l, name_scope="case_9"):
         '''
         U在FL上排的情况
         :param cube:
@@ -833,171 +833,171 @@ class LBLSolver(CubeSolver):
         :return:
         '''
         if cube['F'][0][0] == self._face_map['U'] and cube['U'][2][0] == desire_l and cube['L'][0][2] == desire_f:
-            cube.rotate_sequence("LDL'D'", record="up_corner/case_14/solution")
-            return self._case8(cube, desire_f, desire_l)
+            cube.rotate_sequence("LDL'D'", record="up_corner/{}/solution".format(name_scope))
+            return self._case8(cube, desire_f, desire_l, name_scope=name_scope + "_case_3")
 
-    def _case15(self, cube, desire_f, desire_l):  # U在BR上排的情况
+    def _case15(self, cube, desire_f, desire_l, name_scope="case_10"):  # U在BR上排的情况
         if cube['B'][0][0] == self._face_map['U'] and cube['U'][0][2] == desire_l and cube['R'][0][2] == desire_f:
-            cube.rotate_sequence("B'D'D'B", record="up_corner/case_15/solution")
-            return self._case7(cube, desire_f, desire_l)
+            cube.rotate_sequence("B'D'D'B", record="up_corner/{}/solution".format(name_scope))
+            return self._case7(cube, desire_f, desire_l, name_scope=name_scope + "_case_2")
         if cube['R'][0][2] == self._face_map['U'] and cube['B'][0][0] == desire_l and cube['U'][0][2] == desire_f:
-            cube.rotate_sequence("B'D'D'B", record="up_corner/case_15/solution")
-            return self._case8(cube, desire_f, desire_l)
+            cube.rotate_sequence("B'D'D'B", record="up_corner/{}/solution".format(name_scope))
+            return self._case8(cube, desire_f, desire_l, name_scope=name_scope + "_case_3")
 
-    def _case16(self, cube, desire_f, desire_l):  # U在BL上排的情况
+    def _case16(self, cube, desire_f, desire_l, name_scope="case_11"):  # U在BL上排的情况
         if cube['B'][0][2] == self._face_map['U'] and cube['L'][0][0] == desire_l and cube['U'][0][0] == desire_f:
-            cube.rotate_sequence("BDB'", record="up_corner/case_16/solution")
-            return self._case6(cube, desire_f, desire_l)
+            cube.rotate_sequence("BDB'", record="up_corner/{}/solution".format(name_scope))
+            return self._case6(cube, desire_f, desire_l, name_scope=name_scope + "_case_1")
         if cube['L'][0][0] == self._face_map['U'] and cube['U'][0][0] == desire_l and cube['B'][0][2] == desire_f:
-            cube.rotate_sequence("L'DDLD'", record="up_corner/case_16/solution")
-            return self._case7(cube, desire_f, desire_l)
+            cube.rotate_sequence("L'DDLD'", record="up_corner/{}/solution".format(name_scope))
+            return self._case7(cube, desire_f, desire_l, name_scope=name_scope + "_case_2")
 
     # For the middle layer
-    def _case17(self, cube, desire_f, desire_l):
+    def _case17(self, cube, desire_f, desire_l, name_scope="case_1"):
         # 上换左
         for i in range(4):
             if cube['F'][0][1] == desire_f and cube['U'][2][1] == desire_l:
-                cube._push_back_record(shortcut('U', i), label="middle_layer/case_17/solution")
-                cube.rotate_sequence("U'L'ULUFU'F'", record="middle_layer/case_17/solution")  # The order of this formula is 15
+                cube._push_back_record(shortcut('U', i), label="middle_layer/{}/solution".format(name_scope))
+                cube.rotate_sequence("U'L'ULUFU'F'", record="middle_layer/{}/solution".format(name_scope))  # The order of this formula is 15
                 return True
             cube.rotate("U", record=False)
         return False
 
-    def _case18(self, cube, desire_f, desire_l):
+    def _case18(self, cube, desire_f, desire_l, name_scope="case_2"):
         # 上换右
         for i in range(4):
             if cube['U'][1][0] == desire_f and cube['L'][0][1] == desire_l:
-                cube._push_back_record(shortcut('U', i), label="middle_layer/case_18/solution")
-                cube.view("z'", record="middle_layer/case_18/solution")
-                cube.rotate_sequence("URU'R'U'F'UF", record="middle_layer/case_18/solution")  # The order of this formula is 15
-                cube.view("z", record="middle_layer/case_18/solution")
+                cube._push_back_record(shortcut('U', i), label="middle_layer/{}/transition".format(name_scope))
+                cube.view("z'", record="middle_layer/{}/solution".format(name_scope))
+                cube.rotate_sequence("URU'R'U'F'UF", record="middle_layer/{}/solution".format(name_scope))  # The order of this formula is 15
+                cube.view("z", record="middle_layer/{}/solution".format(name_scope))
                 return True
             cube.rotate("U", record=False)
         return False
 
-    def _case19(self, cube, desire_f, desire_l):
+    def _case19(self, cube, desire_f, desire_l, name_scope="case_3"):
         # 中层反位的情况
         if cube['L'][1][2] == desire_f and cube['F'][1][0] == desire_l:
-            cube.view("z'", record="middle_layer/case_19/solution")
-            cube.rotate_sequence("URU'R'U'F'UF", record="middle_layer/case_19/solution")  # We use formula in case 17 or 18
-            cube.view("z", record="middle_layer/case_19/solution")
-            if self._case17(cube, desire_f, desire_l):
+            cube.view("z'", record="middle_layer/{}/solution".format(name_scope))
+            cube.rotate_sequence("URU'R'U'F'UF", record="middle_layer/{}/solution".format(name_scope))  # We use formula in case 17 or 18
+            cube.view("z", record="middle_layer/{}/solution".format(name_scope))
+            if self._case17(cube, desire_f, desire_l, name_scope=name_scope + "_case_1"):
                 return True
-            if self._case18(cube, desire_f, desire_l):
+            if self._case18(cube, desire_f, desire_l, name_scope=name_scope + "_case_2"):
                 return True
             raise NotImplementedError("Please check implementation")
         return False
 
-    def _case19_1(self, cube):
+    def _case19_1(self, cube, name_scope="case_4"):
         # 中层两个调换的情况
         if cube['F'][1][0] != cube['U'][1][1] and cube['L'][1][2] != cube['U'][1][1]:
             # 这时候找到一个上面或前面含有U颜色的
             for i in range(4):
                 if (cube['F'][0][1] == cube['U'][1][1] or cube['U'][2][1] == cube['U'][1][1]) and not \
                         (cube['F'][1][0] == cube['F'][1][1] and cube['L'][1][2] == cube['L'][1][1]):
-                    cube._push_back_record(shortcut('U', i), label="middle_layer/case_19_1/solution")
-                    cube.rotate_sequence("U'L'ULUFU'F'", record="middle_layer/case_19_1/solution")  # 上换左公式来一个
+                    cube._push_back_record(shortcut('U', i), label="middle_layer/{}/transition".format(name_scope))
+                    cube.rotate_sequence("U'L'ULUFU'F'", record="middle_layer/{}/solution".format(name_scope))  # 上换左公式来一个
                     return True
                 cube.rotate("U", record=False)
         return False
 
     # For the down cross
-    def _case20(self, cube):
+    def _case20(self, cube, name_scope="case_1"):
         # 小拐角的情况
         for i in range(4):
             if cube['U'][1][0] == cube['U'][1][1] and cube['U'][0][1] == cube['U'][1][1]:
-                cube._push_back_record(shortcut('U', i), label="down_cross/case_20/solution")
-                cube.rotate_sequence("FURU'R'F'", record="down_cross/case_20/solution")
+                cube._push_back_record(shortcut('U', i), label="down_cross/{}/transition".format(name_scope))
+                cube.rotate_sequence("FURU'R'F'", record="down_cross/{}/solution".format(name_scope))
                 return True
             cube.rotate("U", record=False)
         return False
 
-    def _case21(self, cube):
+    def _case21(self, cube, name_scope="case_2"):
         # 一字马的情况
         for i in range(4):
             if cube['U'][1][0] == cube['U'][1][1] and cube['U'][1][2] == cube['U'][1][1]:
-                cube._push_back_record(shortcut('U', i), label="down_cross/case_21/solution")
-                cube.rotate_sequence("FURU'R'F'", record="down_cross/case_21/solution")  # 规约为拐角情况
-                return self._case20(cube)
+                cube._push_back_record(shortcut('U', i), label="down_cross/{}/transition".format(name_scope))
+                cube.rotate_sequence("FURU'R'F'", record="down_cross/{}/solution".format(name_scope))  # 规约为拐角情况
+                return self._case20(cube, name_scope=name_scope + "_case_1")
             cube.rotate("U", record=False)
         return False
 
-    def _case22(self, cube):
+    def _case22(self, cube, name_scope="case_3"):
         # 一个黄点的情况，上面一定是黄色的，不用匹配
-        cube.rotate_sequence("FURU'R'F'", record="down_cross/case_22/solution")
-        return self._case21(cube)  # 规约为一字马的情况
+        cube.rotate_sequence("FURU'R'F'", record="down_cross/{}/solution".format(name_scope))
+        return self._case21(cube, name_scope=name_scope + "_case_2")  # 规约为一字马的情况
 
     # For the down corner, see https://zhuanlan.zhihu.com/p/42299115
-    def _case23(self, cube):  # 右手小鱼
+    def _case23(self, cube, name_scope="case_1"):  # 右手小鱼
         for i in range(4):
             if cube['U'][2][0] == cube['F'][0][2] == cube['B'][0][2] == cube['R'][0][2] == cube['U'][1][1]:
-                cube._push_back_record(shortcut('U', i), label="down_corner/case_23/solution")
-                cube.rotate_sequence("RUR'URUUR'", record='down_cross/case_23/solution')
+                cube._push_back_record(shortcut('U', i), label="down_corner/{}/transition".format(name_scope))
+                cube.rotate_sequence("RUR'URUUR'", record='down_corner/{}/solution'.format(name_scope))
                 return True
             cube.rotate("U", record=False)
         return False
 
-    def _case24(self, cube):  # 左手小鱼
+    def _case24(self, cube, name_scope="case_2"):  # 左手小鱼
         for i in range(4):
             if cube['U'][2][2] == cube['F'][0][0] == cube['B'][0][0] == cube['L'][0][0] == cube['U'][1][1]:
-                cube._push_back_record(shortcut('U', i), label="down_corner/case_24/solution")
-                cube.rotate_sequence("L'U'LU'L'U'U'L", record="down_corner/case_24/solution")
+                cube._push_back_record(shortcut('U', i), label="down_corner/{}/transition".format(name_scope))
+                cube.rotate_sequence("L'U'LU'L'U'U'L", record="down_corner/{}/solution".format(name_scope))
                 return True
             cube.rotate("U", record=False)
         return False
 
-    def _case25(self, cube):  # 左上右下都有
+    def _case25(self, cube, name_scope="case_3"):  # 左上右下都有
         for i in range(4):
             if cube['U'][0][0] == cube['U'][2][2] == cube['F'][0][0] == cube['R'][2][2] == cube['U'][1][1]:
-                cube._push_back_record(shortcut('U', i), label="down_corner/case_25/solution")
-                cube.rotate_sequence("RUR'URUUR'", record="down_corner/case_25/solution")
-                return self._case24(cube)
+                cube._push_back_record(shortcut('U', i), label="down_corner/{}/transition".format(name_scope))
+                cube.rotate_sequence("RUR'URUUR'", record="down_corner/{}/solution".format(name_scope))
+                return self._case24(cube, name_scope=name_scope + "_case_2")
             if cube['U'][2][0] == cube['U'][0][2] == cube['L'][0][0] == cube['F'][0][2] == cube['U'][1][1]:
-                cube._push_back_record(shortcut('U', i), label="down_corner/case_25/solution")
-                cube.rotate_sequence("L'U'LU'L'U'U'L", record="down_corner/case_25/solution")
-                return self._case23(cube)
+                cube._push_back_record(shortcut('U', i), label="down_corner/{}/transition".format(name_scope))
+                cube.rotate_sequence("L'U'LU'L'U'U'L", record="down_corner/{}/solution".format(name_scope))
+                return self._case23(cube, name_scope=name_scope + "_case_1")
             cube.rotate("U", record=False)
         return False
 
-    def _case26(self, cube):  # 左上右上
+    def _case26(self, cube, name_scope="case_4"):  # 左上右上
         for i in range(4):
             if cube['U'][0][0] == cube['F'][0][0] == cube['F'][0][2] == cube['U'][0][2] == cube['U'][1][1]:
-                cube._push_back_record(shortcut('U', i), label="down_corner/case_26/solution")
-                cube.rotate_sequence("RUR'URUUR'", record="down_corner/case_26/solution")
-                return self._case24(cube)
+                cube._push_back_record(shortcut('U', i), label="down_corner/{}/transition".format(name_scope))
+                cube.rotate_sequence("RUR'URUUR'", record="down_corner/{}/solution".format(name_scope))
+                return self._case24(cube, name_scope=name_scope + "_case_2")
             cube.rotate("U", record=False)
         return False
 
-    def _case27(self, cube):  # 右上右下
+    def _case27(self, cube, name_scope="case_5"):  # 右上右下
         for i in range(4):
             if cube['F'][0][0] == cube['U'][0][2] == cube['U'][2][2] == cube['B'][0][2] == cube['U'][1][1]:
-                cube._push_back_record(shortcut('U', i), label="down_corner/case_27/solution")
-                cube.rotate_sequence("RUR'URUUR'", record="down_corner/case_27/solution")
-                return self._case24(cube)
+                cube._push_back_record(shortcut('U', i), label="down_corner/{}/transition".format(name_scope))
+                cube.rotate_sequence("RUR'URUUR'", record="down_corner/{}/solution".format(name_scope))
+                return self._case24(cube, name_scope=name_scope + "_case_2")
             cube.rotate("U", record=False)
         return False
 
-    def _case28(self, cube):  # 只有十字1
+    def _case28(self, cube, name_scope="case_6"):  # 只有十字1
         for i in range(4):
             if cube['L'][0][2] == cube['R'][0][0] == cube['R'][0][2] == cube['U'][1][1]:
-                cube._push_back_record(shortcut('U', i), label="down_corner/case_28/solution")
-                cube.rotate_sequence("RUR'URUUR'", record="down_corner/case_28/solution")
-                return self._case23(cube)
+                cube._push_back_record(shortcut('U', i), label="down_corner/{}/transition".format(name_scope))
+                cube.rotate_sequence("RUR'URUUR'", record="down_corner/{}/solution".format(name_scope))
+                return self._case23(cube, name_scope=name_scope + "_case_1")
             cube.rotate("U", record=False)
         return False
 
-    def _case29(self, cube):  # 只有十字2
+    def _case29(self, cube, name_scope="case_7"):  # 只有十字2
         for i in range(4):
             if cube['L'][0][2] == cube['F'][0][2] == cube['U'][1][1]:
-                cube._push_back_record(shortcut('U', i), label="down_corner/case_29/solution")
-                cube.rotate_sequence("RUR'URUUR'", record="down_corner/case_29/solution")
-                return self._case23(cube)
+                cube._push_back_record(shortcut('U', i), label="down_corner/{}/transition".format(name_scope))
+                cube.rotate_sequence("RUR'URUUR'", record="down_corner/{}/solution".format(name_scope))
+                return self._case23(cube, name_scope=name_scope + "_case_1")
             cube.rotate("U", record=False)
         return False
 
 
     # For the down corner of other faces, https://zhuanlan.zhihu.com/p/42331476
-    def _case30(self, cube):
+    def _case30(self, cube, name_scope="case_1"):
         for i in range(4):
             if cube['L'][0][0] == cube['L'][0][2] == cube['L'][1][1]:
                 cube.view("z'")
@@ -1007,18 +1007,18 @@ class LBLSolver(CubeSolver):
                 cube.view("z")
                 cube.view("z")
             if cube['F'][0][0] == cube['F'][0][2] == cube['F'][1][1]:  # Above three conditions will fall through to here
-                cube._push_back_record(shortcut('U', i), label="down_corner_2/case_30/solution")
-                cube.view("z'", record="down_corner_2/case_30/solution")
-                cube.view("y'", record="down_corner_2/case_30/solution")
-                cube.rotate_sequence("UURU'U'R'FF", record="down_corner_2/case_30/solution")
-                cube.rotate_sequence("U'U'L'UULF'F'", record="down_corner_2/case_30/solution")
-                cube.view("y", record="down_corner_2/case_30/solution")
-                cube.view("z", record="down_corner_2/case_30/solution")
+                cube._push_back_record(shortcut('U', i), label="down_corner_2/{}/transition".format(name_scope))
+                cube.view("z'", record="down_corner_2/{}/solution".format(name_scope))
+                cube.view("y'", record="down_corner_2/{}/solution".format(name_scope))
+                cube.rotate_sequence("UURU'U'R'FF", record="down_corner_2/{}/solution".format(name_scope))
+                cube.rotate_sequence("U'U'L'UULF'F'", record="down_corner_2/{}/solution".format(name_scope))
+                cube.view("y", record="down_corner_2/{}/solution".format(name_scope))
+                cube.view("z", record="down_corner_2/{}/solution".format(name_scope))
                 for j in range(4):
                     if not (cube['F'][0][0] == cube['F'][2][2] == cube['F'][1][1]):
                         cube.rotate("U", record=False)
                     else:
-                        cube._push_back_record(shortcut('U', j), label="down_corner_2/case_30/solution")
+                        cube._push_back_record(shortcut('U', j), label="down_corner_2/{}/solution".format(name_scope))
                         return True
                 print(cube)
                 raise NotImplementedError
@@ -1026,19 +1026,19 @@ class LBLSolver(CubeSolver):
         return False
 
     # For the last step of solving the down edge
-    def _case31(self, cube):
+    def _case31(self, cube, name_scope="case_1"):
         if cube['L'][0][1] == cube['R'][1][1] and cube['R'][0][1] == cube['F'][1][1] and cube['F'][0][1] == cube['L'][1][1]:
-            cube.rotate_sequence("RUR'URUUR'", record="down_edge/case_31/solution")
-            cube.view("z", record="down_edge/case_31/solution")
-            cube.rotate_sequence("L'U'LU'L'U'U'L", record="down_edge/case_31/solution")
+            cube.rotate_sequence("RUR'URUUR'", record="down_edge/{}/solution".format(name_scope))
+            cube.view("z", record="down_edge/{}/solution".format(name_scope))
+            cube.rotate_sequence("L'U'LU'L'U'U'L", record="down_edge/{}/solution".format(name_scope))
             return True
         return False
 
-    def _case32(self, cube):
+    def _case32(self, cube, name_scope="case_2"):
         if cube['L'][0][1] == cube['F'][1][1] and cube['F'][0][1] == cube['R'][1][1] and cube['R'][0][1] == cube['L'][1][1]:
-            cube.rotate_sequence("L'U'LU'L'U'U'L", record="down_edge/case_31/solution")
-            cube.view("z'", record="down_edge/case_31/solution")
-            cube.rotate_sequence("RUR'URUUR'", record="down_edge/case_31/solution")
+            cube.rotate_sequence("L'U'LU'L'U'U'L", record="down_edge/{}/solution".format(name_scope))
+            cube.view("z'", record="down_edge/{}/solution".format(name_scope))
+            cube.rotate_sequence("RUR'URUUR'", record="down_edge/{}/solution".format(name_scope))
             return True
         return False
 
@@ -1069,15 +1069,15 @@ class LBLSolver(CubeSolver):
         # 特判U在上面
         if cube['U'][1][0] == self._face_map['U'] and cube['L'][0][1] == desire:  # 一定在cross的第一次发生
             assert(stage == 0)
-            cube.rotate_sequence("U'", record="up_cross/case_5_1/solution")
+            cube.rotate_sequence("U'", record="up_cross/case_6/solution")
             return
         if cube['U'][1][2] == self._face_map['U'] and cube['R'][0][1] == desire:
-            cube.rotate_sequence("R'", record="up_cross/case_5_2/solution")
-            if self._case3(cube, desire):
+            cube.rotate_sequence("R'", record="up_cross/case_7/solution")
+            if self._case3(cube, desire, name_scope="case_7"):
                 return
         if cube['U'][0][1] == self._face_map['U'] and cube['B'][0][1] == desire:
-            cube.rotate_sequence("B'", record="up_cross/case_5_3/solution")
-            if self._case2(cube, desire):
+            cube.rotate_sequence("B'", record="up_cross/case_8/solution")
+            if self._case2(cube, desire, name_scope="case_8"):
                 return
 
         raise NotImplementedError("There are other cases not implemented")
@@ -1132,7 +1132,7 @@ class LBLSolver(CubeSolver):
             return
         for i in range(4):
             self.up_cross_one(cube, cube['F'][1][1], i)
-            cube.view('z', record='up_cross/transition')
+            cube.view('z', record='up_cross/next')
         return
 
     def solve_up_corner(self, cube):
@@ -1147,11 +1147,11 @@ class LBLSolver(CubeSolver):
             desire_l = cube['L'][1][1]
             desire_f = cube['F'][1][1]
             self.up_corner_one(cube, desire_f, desire_l)
-            cube.view('z', record='up_corner/transition')
+            cube.view('z', record='up_corner/next')
 
     def solve_middle_layer(self, cube):
-        cube.view("x", record="middle_layer/transition")
-        cube.view("x", record="middle_layer/transition")
+        cube.view("x", record="middle_layer/case_*/transition")
+        cube.view("x", record="middle_layer/case_*/transition")
         fail_cnt = 0    # If no operation happens after 4 rotations, we will know that some conditions are not covered
         while not cube.is_middle_layer_finished():
             if not (cube['L'][1][2] == cube['L'][1][1] and cube['F'][1][0] == cube['F'][1][1]):
@@ -1174,7 +1174,7 @@ class LBLSolver(CubeSolver):
                     print(cube)
                     raise NotImplementedError("Some condition may not be implemented in solving middle layer")
             else:
-                cube.view("z", record="middle_layer/transition")
+                cube.view("z", record="middle_layer/next")
 
     def solve_down_cross(self, cube):
         if cube.is_down_cross_finished():
@@ -1208,19 +1208,20 @@ class LBLSolver(CubeSolver):
     def solve_down_corner_2(self, cube):
         fail_cnt = 0
         while not cube.is_down_corner2_finished():
-            if self._case30(cube):
+            if self._case30(cube, name_scope="case_1"):
                 if cube.is_down_corner2_finished():
                     return
             else:
                 fail_cnt += 1
                 if fail_cnt > 3:
                     raise ValueError("Too much failing in solving down corner. Optimize.")
-                cube.view("z'", record="down_corner_2/transition")
-                cube.view("y'", record="down_corner_2/transition")
-                cube.rotate_sequence("UURU'U'R'FF", record="down_corner_2/transition")
-                cube.rotate_sequence("U'U'L'UULF'F'", record="down_corner_2/transition")
-                cube.view("y", record="down_corner_2/transition")
-                cube.view("z", record="down_corner_2/transition")
+                name_scope = "case_2"
+                cube.view("z'", record="down_corner_2/{}/solution".format(name_scope))
+                cube.view("y'", record="down_corner_2/{}/solution".format(name_scope))
+                cube.rotate_sequence("UURU'U'R'FF", record="down_corner_2/{}/solution".format(name_scope))
+                cube.rotate_sequence("U'U'L'UULF'F'", record="down_corner_2/{}/solution".format(name_scope))
+                cube.view("y", record="down_corner_2/{}/solution".format(name_scope))
+                cube.view("z", record="down_corner_2/{}/solution".format(name_scope))
 
     def solve_down_edge(self, cube):
 
@@ -1228,21 +1229,21 @@ class LBLSolver(CubeSolver):
             if cube.is_down_edge_finished():
                 return True
             if cube.is_face_solved('L'):
-                cube.view("z", record="down_corner_2/transition")
+                cube.view("z", record="down_edge/case_*/transition")
             if cube.is_face_solved('R'):
-                cube.view("z'", record="down_corner_2/transition")
+                cube.view("z'", record="down_edge/case_*/transition")
             if cube.is_face_solved('F'):
-                cube.view("z", record="down_corner_2/transition")
-                cube.view("z", record="down_corner_2/transition")
+                cube.view("z", record="down_edge/case_*/transition")
+                cube.view("z", record="down_edge/case_*/transition")
             if cube.is_face_solved('B'):
                 if self._case31(cube):
                     return True
                 if self._case32(cube):
                     return True
                 raise NotImplementedError
-            cube.rotate_sequence("RUR'URUUR'", record="down_edge/case_33/solution")
-            cube.view("z", record="down_edge/case_33/solution")
-            cube.rotate_sequence("L'U'LU'L'U'U'L", record="down_edge/case_33/solution")
+            cube.rotate_sequence("RUR'URUUR'", record="down_edge/case_*/transition")
+            cube.view("z", record="down_edge/case_*/transition")
+            cube.rotate_sequence("L'U'LU'L'U'U'L", record="down_edge/case_*/transition")
             return False
 
         fail_cnt = 0
@@ -1362,6 +1363,7 @@ def _create_step_ut(samples, seed, until_step, f_conditions):
                 print("=======Rotate sequence======")
                 print(" ".join(steps))
                 print(" ".join(cube_c.get_record()))
+                raise e
                 break
     return _ut_fn()
 
