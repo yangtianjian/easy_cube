@@ -1,4 +1,0 @@
-/Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /Users/apple/Desktop/profile/easy_cube/rest_server/cube_solver/lbl_wrapper
--- Configuring done
--- Generating done
--- Build files have been written to: /Users/apple/Desktop/profile/easy_cube/rest_server/cube_solver/lbl_wrapper/cmake-build-debug

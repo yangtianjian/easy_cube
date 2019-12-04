@@ -6,9 +6,9 @@ import torch
 
 class CNNModel():
 
-    def __init__(self):
+    def __init__(self, model_path):
         device = 'cuda' if torch.cuda.is_available() else 'cpu'
-        self.cnn_model = CNNDetectorInference('./models/best_model', device)
+        self.cnn_model = CNNDetectorInference(model_path, device)
         self._cm_inv = get_inverse_colormap()
 
     def predict(self, img):

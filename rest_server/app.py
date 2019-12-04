@@ -7,6 +7,7 @@ import functools
 import random
 from tqdm import trange
 import os
+import pickle
 
 
 urls = (
@@ -61,19 +62,24 @@ def get_case_apply_interval(program_number, case_number, op_label):
         case_num = case_text.split("_")[1]
         if i == l - 1 and head is not None:
             tail = end + 1
+            break
         elif head is None and program_mapping[program_number] == program and str(case_number) == case_num and stage == "solution":
             head = start
             if i == l - 1:
                 tail = end + 1
+                break
         elif head is not None:
             if stage == "next":
                 tail = start
-            if program_number < len(program_mapping):
+                break
+            elif program_number < len(program_mapping):
                 if program_mapping[program_number + 1] == program:
                     tail = start
+                    break
             else:
                 if stage != "solution":
                     tail = start
+                    break
     return (head, tail)
 
 
@@ -115,16 +121,28 @@ def create_cube(program_number, case_number):
         }
 
 
-def create_cache():
-    global problem_cache
+def create_problem_cache():
+    cache_ = {}
     cases = [0, 0, 0, 3, 3, 7, 2, 3]
     cache_volume = 10
     for x in trange(3, 8):
-        problem_cache[x] = {}
+        cache_[x] = {}
         for y in range(1, cases[x] + 1):
-            problem_cache[x][y] = [None] * cache_volume
+            cache_[x][y] = [None] * cache_volume
             for t in range(cache_volume):
-                problem_cache[x][y][t] = create_cube(x, y)
+                cache_[x][y][t] = create_cube(x, y)
+    return cache_
+
+def read_or_create_cache(path, create_fn):
+    if not os.path.exists(path):
+        cache_ = create_fn()
+        with open(path, "wb") as f:
+            pickle.dump(cache_, f)
+        return cache_
+    else:
+        with open(path, "rb") as f:
+            cache_ = pickle.load(f)
+        return cache_
 
 
 class SolveLBL():
@@ -367,7 +385,7 @@ class Generate():
                 "message": str(e)
             }
 
+problem_cache = read_or_create_cache('./cube_solver/problems/problem_cache.pkl', create_problem_cache)
 if __name__ == '__main__':
-    create_cache()
     app = web.application(urls, globals())
     app.run()
