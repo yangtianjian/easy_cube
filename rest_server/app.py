@@ -14,7 +14,8 @@ urls = (
     '/solve_lbl', 'SolveLBL',
     '/solve_koci', 'SolveKoci',
     '/recognize', 'RecognizeColor',
-    '/generate', 'Generate'
+    '/generate', 'Generate',
+    '/', "Test"
 )
 
 color_detector = CNNModel('./colordetect/models/best_model')
@@ -384,6 +385,11 @@ class Generate():
                 "success": False,
                 "message": str(e)
             }
+
+class Test():
+    def GET(self):
+        return "<html><head></head><body> <h1>It works !</h1></body></html>"
+
 
 problem_cache = read_or_create_cache('./cube_solver/problems/problem_cache.pkl', create_problem_cache)
 if __name__ == '__main__':
