@@ -312,11 +312,11 @@ class RecognizeColor():
                 channel_data = np.array(img_data[k])
                 channel_data = channel_data.reshape(data['picture']['height'], data['picture']['width'])
                 img_arr.append(channel_data)
-            img_arr = np.stack(img_arr, axis=0)
+            img_arr = np.stack(img_arr, axis=-1)
             colors = color_detector.predict(img_arr)
             face_colors[face] = [_color_map[x] for x in colors]
-        cube = Cube.from_json(face_colors)
         try:
+            cube = Cube.from_json(face_colors, check_valid=True)
             formula = KociembaSolver(terminal=cube).solve(Cube())
             return {
                 "success": True,
@@ -328,7 +328,7 @@ class RecognizeColor():
             return {
                 "success": False,
                 "message": "The cube is invalid. Please check the cube.",
-                "cube": {},
+                "cube": face_colors,
                 "trans": []
             }
 

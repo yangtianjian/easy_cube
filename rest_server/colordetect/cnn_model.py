@@ -23,6 +23,7 @@ def _cal_size(i, p, k, st):
 
 def _create_preprocess_fn(d):
     def preprocess_fn(img0):
+        img0 = img0.astype(np.uint8)
         img0 = cv2.resize(img0, (d, d), interpolation=cv2.INTER_AREA)
         return img0
     return preprocess_fn

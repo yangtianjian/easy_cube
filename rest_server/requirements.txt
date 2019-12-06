@@ -22,7 +22,6 @@ cppimport==18.11.8
 cryptography==2.6.1
 cycler==0.10.0
 cymem==1.31.2
-Cython==0.29.7
 cytoolz==0.8.2
 db==0.1.1
 decorator==4.4.0
@@ -76,7 +75,6 @@ Keras-Applications==1.0.7
 Keras-Preprocessing==1.0.9
 kiwisolver==1.0.1
 kociemba==1.2.1
-lblcube==1.0.0
 lxml==4.3.3
 Mako==1.1.0
 Markdown==3.0.1

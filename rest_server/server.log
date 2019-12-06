@@ -1,0 +1,585 @@
+http://0.0.0.0:8888/
+http://0.0.0.0:8888/
+http://0.0.0.0:8888/
+Server got itself in trouble
+Traceback (most recent call last):
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 257, in process
+    return self.handle()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 248, in handle
+    return self._delegate(fn, self.fvars, args)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 488, in _delegate
+    return handle_class(cls)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 466, in handle_class
+    return tocall(*args)
+  File "/Users/apple/Desktop/profile/easy_cube/rest_server/app.py", line 69, in wrapper
+    return func(obj, data, *args, **kwargs)
+  File "/Users/apple/Desktop/profile/easy_cube/rest_server/app.py", line 309, in POST
+    img_data = data['picture'][face]
+KeyError: 'picture'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 255, in process
+    return p(lambda: process(processors))
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 643, in processor
+    return handler()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 255, in <lambda>
+    return p(lambda: process(processors))
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 264, in process
+    raise self.internalerror()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 545, in internalerror
+    return debugerror()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/debugerror.py", line 313, in debugerror
+    return web._InternalError(djangoerror())
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/debugerror.py", line 303, in djangoerror
+    return t(exception_type, exception_value, frames)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/template.py", line 904, in __call__
+    return BaseTemplate.__call__(self, *a, **kw)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/template.py", line 831, in __call__
+    return self.t(*a, **kw)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/debugerror.py", line 193, in __template__
+    </div>
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/webapi.py", line 364, in input
+    out = rawinput(_method)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/webapi.py", line 341, in rawinput
+    a = cgi.FieldStorage(fp=fp, environ=e, keep_blank_values=1)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/cgi.py", line 561, in __init__
+    self.read_single()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/cgi.py", line 740, in read_single
+    self.read_binary()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/cgi.py", line 762, in read_binary
+    self.file.write(data)
+TypeError: write() argument must be str, not bytes
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 255, in process
+    return p(lambda: process(processors))
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 643, in processor
+    return handler()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 255, in <lambda>
+    return p(lambda: process(processors))
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 264, in process
+    raise self.internalerror()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 545, in internalerror
+    return debugerror()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/debugerror.py", line 313, in debugerror
+    return web._InternalError(djangoerror())
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/debugerror.py", line 303, in djangoerror
+    return t(exception_type, exception_value, frames)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/template.py", line 904, in __call__
+    return BaseTemplate.__call__(self, *a, **kw)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/template.py", line 831, in __call__
+    return self.t(*a, **kw)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/debugerror.py", line 193, in __template__
+    </div>
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/webapi.py", line 364, in input
+    out = rawinput(_method)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/webapi.py", line 341, in rawinput
+    a = cgi.FieldStorage(fp=fp, environ=e, keep_blank_values=1)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/cgi.py", line 561, in __init__
+    self.read_single()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/cgi.py", line 740, in read_single
+    self.read_binary()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/cgi.py", line 762, in read_binary
+    self.file.write(data)
+TypeError: write() argument must be str, not bytes
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 255, in process
+    return p(lambda: process(processors))
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 658, in processor
+    result = handler()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 255, in <lambda>
+    return p(lambda: process(processors))
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 264, in process
+    raise self.internalerror()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 545, in internalerror
+    return debugerror()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/debugerror.py", line 313, in debugerror
+    return web._InternalError(djangoerror())
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/debugerror.py", line 303, in djangoerror
+    return t(exception_type, exception_value, frames)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/template.py", line 904, in __call__
+    return BaseTemplate.__call__(self, *a, **kw)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/template.py", line 831, in __call__
+    return self.t(*a, **kw)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/debugerror.py", line 193, in __template__
+    </div>
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/webapi.py", line 364, in input
+    out = rawinput(_method)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/webapi.py", line 341, in rawinput
+    a = cgi.FieldStorage(fp=fp, environ=e, keep_blank_values=1)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/cgi.py", line 561, in __init__
+    self.read_single()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/cgi.py", line 740, in read_single
+    self.read_binary()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/cgi.py", line 762, in read_binary
+    self.file.write(data)
+TypeError: write() argument must be str, not bytes
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 255, in process
+    return p(lambda: process(processors))
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 643, in processor
+    return handler()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 255, in <lambda>
+    return p(lambda: process(processors))
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 264, in process
+    raise self.internalerror()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 545, in internalerror
+    return debugerror()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/debugerror.py", line 313, in debugerror
+    return web._InternalError(djangoerror())
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/debugerror.py", line 303, in djangoerror
+    return t(exception_type, exception_value, frames)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/template.py", line 904, in __call__
+    return BaseTemplate.__call__(self, *a, **kw)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/template.py", line 831, in __call__
+    return self.t(*a, **kw)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/debugerror.py", line 193, in __template__
+    </div>
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/webapi.py", line 364, in input
+    out = rawinput(_method)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/webapi.py", line 341, in rawinput
+    a = cgi.FieldStorage(fp=fp, environ=e, keep_blank_values=1)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/cgi.py", line 561, in __init__
+    self.read_single()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/cgi.py", line 740, in read_single
+    self.read_binary()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/cgi.py", line 762, in read_binary
+    self.file.write(data)
+TypeError: write() argument must be str, not bytes
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/wsgilog/__init__.py", line 192, in __call__
+    return self.application(environ, start_response)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 295, in wsgi
+    result = self.handle_with_processors()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 267, in handle_with_processors
+    return process(self.processors)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 264, in process
+    raise self.internalerror()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 545, in internalerror
+    return debugerror()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/debugerror.py", line 313, in debugerror
+    return web._InternalError(djangoerror())
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/debugerror.py", line 303, in djangoerror
+    return t(exception_type, exception_value, frames)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/template.py", line 904, in __call__
+    return BaseTemplate.__call__(self, *a, **kw)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/template.py", line 831, in __call__
+    return self.t(*a, **kw)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/debugerror.py", line 193, in __template__
+    </div>
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/webapi.py", line 364, in input
+    out = rawinput(_method)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/webapi.py", line 341, in rawinput
+    a = cgi.FieldStorage(fp=fp, environ=e, keep_blank_values=1)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/cgi.py", line 561, in __init__
+    self.read_single()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/cgi.py", line 740, in read_single
+    self.read_binary()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/cgi.py", line 762, in read_binary
+    self.file.write(data)
+TypeError: write() argument must be str, not bytes
+Server got itself in trouble
+Traceback (most recent call last):
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 257, in process
+    return self.handle()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 248, in handle
+    return self._delegate(fn, self.fvars, args)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 488, in _delegate
+    return handle_class(cls)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 466, in handle_class
+    return tocall(*args)
+  File "/Users/apple/Desktop/profile/easy_cube/rest_server/app.py", line 69, in wrapper
+    return func(obj, data, *args, **kwargs)
+  File "/Users/apple/Desktop/profile/easy_cube/rest_server/app.py", line 309, in POST
+    img_data = data['picture'][face]
+KeyError: 'F'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 255, in process
+    return p(lambda: process(processors))
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 643, in processor
+    return handler()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 255, in <lambda>
+    return p(lambda: process(processors))
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 264, in process
+    raise self.internalerror()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 545, in internalerror
+    return debugerror()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/debugerror.py", line 313, in debugerror
+    return web._InternalError(djangoerror())
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/debugerror.py", line 303, in djangoerror
+    return t(exception_type, exception_value, frames)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/template.py", line 904, in __call__
+    return BaseTemplate.__call__(self, *a, **kw)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/template.py", line 831, in __call__
+    return self.t(*a, **kw)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/debugerror.py", line 193, in __template__
+    </div>
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/webapi.py", line 364, in input
+    out = rawinput(_method)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/webapi.py", line 341, in rawinput
+    a = cgi.FieldStorage(fp=fp, environ=e, keep_blank_values=1)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/cgi.py", line 561, in __init__
+    self.read_single()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/cgi.py", line 740, in read_single
+    self.read_binary()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/cgi.py", line 762, in read_binary
+    self.file.write(data)
+TypeError: write() argument must be str, not bytes
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 255, in process
+    return p(lambda: process(processors))
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 643, in processor
+    return handler()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 255, in <lambda>
+    return p(lambda: process(processors))
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 264, in process
+    raise self.internalerror()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 545, in internalerror
+    return debugerror()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/debugerror.py", line 313, in debugerror
+    return web._InternalError(djangoerror())
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/debugerror.py", line 303, in djangoerror
+    return t(exception_type, exception_value, frames)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/template.py", line 904, in __call__
+    return BaseTemplate.__call__(self, *a, **kw)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/template.py", line 831, in __call__
+    return self.t(*a, **kw)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/debugerror.py", line 193, in __template__
+    </div>
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/webapi.py", line 364, in input
+    out = rawinput(_method)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/webapi.py", line 341, in rawinput
+    a = cgi.FieldStorage(fp=fp, environ=e, keep_blank_values=1)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/cgi.py", line 561, in __init__
+    self.read_single()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/cgi.py", line 740, in read_single
+    self.read_binary()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/cgi.py", line 762, in read_binary
+    self.file.write(data)
+TypeError: write() argument must be str, not bytes
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 255, in process
+    return p(lambda: process(processors))
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 658, in processor
+    result = handler()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 255, in <lambda>
+    return p(lambda: process(processors))
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 264, in process
+    raise self.internalerror()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 545, in internalerror
+    return debugerror()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/debugerror.py", line 313, in debugerror
+    return web._InternalError(djangoerror())
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/debugerror.py", line 303, in djangoerror
+    return t(exception_type, exception_value, frames)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/template.py", line 904, in __call__
+    return BaseTemplate.__call__(self, *a, **kw)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/template.py", line 831, in __call__
+    return self.t(*a, **kw)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/debugerror.py", line 193, in __template__
+    </div>
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/webapi.py", line 364, in input
+    out = rawinput(_method)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/webapi.py", line 341, in rawinput
+    a = cgi.FieldStorage(fp=fp, environ=e, keep_blank_values=1)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/cgi.py", line 561, in __init__
+    self.read_single()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/cgi.py", line 740, in read_single
+    self.read_binary()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/cgi.py", line 762, in read_binary
+    self.file.write(data)
+TypeError: write() argument must be str, not bytes
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 255, in process
+    return p(lambda: process(processors))
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 643, in processor
+    return handler()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 255, in <lambda>
+    return p(lambda: process(processors))
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 264, in process
+    raise self.internalerror()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 545, in internalerror
+    return debugerror()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/debugerror.py", line 313, in debugerror
+    return web._InternalError(djangoerror())
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/debugerror.py", line 303, in djangoerror
+    return t(exception_type, exception_value, frames)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/template.py", line 904, in __call__
+    return BaseTemplate.__call__(self, *a, **kw)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/template.py", line 831, in __call__
+    return self.t(*a, **kw)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/debugerror.py", line 193, in __template__
+    </div>
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/webapi.py", line 364, in input
+    out = rawinput(_method)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/webapi.py", line 341, in rawinput
+    a = cgi.FieldStorage(fp=fp, environ=e, keep_blank_values=1)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/cgi.py", line 561, in __init__
+    self.read_single()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/cgi.py", line 740, in read_single
+    self.read_binary()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/cgi.py", line 762, in read_binary
+    self.file.write(data)
+TypeError: write() argument must be str, not bytes
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/wsgilog/__init__.py", line 192, in __call__
+    return self.application(environ, start_response)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 295, in wsgi
+    result = self.handle_with_processors()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 267, in handle_with_processors
+    return process(self.processors)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 264, in process
+    raise self.internalerror()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 545, in internalerror
+    return debugerror()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/debugerror.py", line 313, in debugerror
+    return web._InternalError(djangoerror())
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/debugerror.py", line 303, in djangoerror
+    return t(exception_type, exception_value, frames)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/template.py", line 904, in __call__
+    return BaseTemplate.__call__(self, *a, **kw)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/template.py", line 831, in __call__
+    return self.t(*a, **kw)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/debugerror.py", line 193, in __template__
+    </div>
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/webapi.py", line 364, in input
+    out = rawinput(_method)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/webapi.py", line 341, in rawinput
+    a = cgi.FieldStorage(fp=fp, environ=e, keep_blank_values=1)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/cgi.py", line 561, in __init__
+    self.read_single()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/cgi.py", line 740, in read_single
+    self.read_binary()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/cgi.py", line 762, in read_binary
+    self.file.write(data)
+TypeError: write() argument must be str, not bytes
+Server got itself in trouble
+Traceback (most recent call last):
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 257, in process
+    return self.handle()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 248, in handle
+    return self._delegate(fn, self.fvars, args)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 488, in _delegate
+    return handle_class(cls)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 466, in handle_class
+    return tocall(*args)
+  File "/Users/apple/Desktop/profile/easy_cube/rest_server/app.py", line 69, in wrapper
+    return func(obj, data, *args, **kwargs)
+  File "/Users/apple/Desktop/profile/easy_cube/rest_server/app.py", line 309, in POST
+    img_data = data['picture'][face]
+KeyError: 'F'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 255, in process
+    return p(lambda: process(processors))
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 643, in processor
+    return handler()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 255, in <lambda>
+    return p(lambda: process(processors))
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 264, in process
+    raise self.internalerror()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 545, in internalerror
+    return debugerror()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/debugerror.py", line 313, in debugerror
+    return web._InternalError(djangoerror())
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/debugerror.py", line 303, in djangoerror
+    return t(exception_type, exception_value, frames)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/template.py", line 904, in __call__
+    return BaseTemplate.__call__(self, *a, **kw)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/template.py", line 831, in __call__
+    return self.t(*a, **kw)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/debugerror.py", line 193, in __template__
+    </div>
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/webapi.py", line 364, in input
+    out = rawinput(_method)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/webapi.py", line 341, in rawinput
+    a = cgi.FieldStorage(fp=fp, environ=e, keep_blank_values=1)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/cgi.py", line 561, in __init__
+    self.read_single()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/cgi.py", line 740, in read_single
+    self.read_binary()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/cgi.py", line 762, in read_binary
+    self.file.write(data)
+TypeError: write() argument must be str, not bytes
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 255, in process
+    return p(lambda: process(processors))
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 643, in processor
+    return handler()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 255, in <lambda>
+    return p(lambda: process(processors))
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 264, in process
+    raise self.internalerror()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 545, in internalerror
+    return debugerror()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/debugerror.py", line 313, in debugerror
+    return web._InternalError(djangoerror())
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/debugerror.py", line 303, in djangoerror
+    return t(exception_type, exception_value, frames)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/template.py", line 904, in __call__
+    return BaseTemplate.__call__(self, *a, **kw)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/template.py", line 831, in __call__
+    return self.t(*a, **kw)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/debugerror.py", line 193, in __template__
+    </div>
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/webapi.py", line 364, in input
+    out = rawinput(_method)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/webapi.py", line 341, in rawinput
+    a = cgi.FieldStorage(fp=fp, environ=e, keep_blank_values=1)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/cgi.py", line 561, in __init__
+    self.read_single()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/cgi.py", line 740, in read_single
+    self.read_binary()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/cgi.py", line 762, in read_binary
+    self.file.write(data)
+TypeError: write() argument must be str, not bytes
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 255, in process
+    return p(lambda: process(processors))
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 658, in processor
+    result = handler()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 255, in <lambda>
+    return p(lambda: process(processors))
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 264, in process
+    raise self.internalerror()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 545, in internalerror
+    return debugerror()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/debugerror.py", line 313, in debugerror
+    return web._InternalError(djangoerror())
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/debugerror.py", line 303, in djangoerror
+    return t(exception_type, exception_value, frames)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/template.py", line 904, in __call__
+    return BaseTemplate.__call__(self, *a, **kw)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/template.py", line 831, in __call__
+    return self.t(*a, **kw)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/debugerror.py", line 193, in __template__
+    </div>
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/webapi.py", line 364, in input
+    out = rawinput(_method)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/webapi.py", line 341, in rawinput
+    a = cgi.FieldStorage(fp=fp, environ=e, keep_blank_values=1)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/cgi.py", line 561, in __init__
+    self.read_single()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/cgi.py", line 740, in read_single
+    self.read_binary()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/cgi.py", line 762, in read_binary
+    self.file.write(data)
+TypeError: write() argument must be str, not bytes
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 255, in process
+    return p(lambda: process(processors))
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 643, in processor
+    return handler()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 255, in <lambda>
+    return p(lambda: process(processors))
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 264, in process
+    raise self.internalerror()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 545, in internalerror
+    return debugerror()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/debugerror.py", line 313, in debugerror
+    return web._InternalError(djangoerror())
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/debugerror.py", line 303, in djangoerror
+    return t(exception_type, exception_value, frames)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/template.py", line 904, in __call__
+    return BaseTemplate.__call__(self, *a, **kw)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/template.py", line 831, in __call__
+    return self.t(*a, **kw)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/debugerror.py", line 193, in __template__
+    </div>
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/webapi.py", line 364, in input
+    out = rawinput(_method)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/webapi.py", line 341, in rawinput
+    a = cgi.FieldStorage(fp=fp, environ=e, keep_blank_values=1)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/cgi.py", line 561, in __init__
+    self.read_single()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/cgi.py", line 740, in read_single
+    self.read_binary()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/cgi.py", line 762, in read_binary
+    self.file.write(data)
+TypeError: write() argument must be str, not bytes
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/wsgilog/__init__.py", line 192, in __call__
+    return self.application(environ, start_response)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 295, in wsgi
+    result = self.handle_with_processors()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 267, in handle_with_processors
+    return process(self.processors)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 264, in process
+    raise self.internalerror()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/application.py", line 545, in internalerror
+    return debugerror()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/debugerror.py", line 313, in debugerror
+    return web._InternalError(djangoerror())
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/debugerror.py", line 303, in djangoerror
+    return t(exception_type, exception_value, frames)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/template.py", line 904, in __call__
+    return BaseTemplate.__call__(self, *a, **kw)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/template.py", line 831, in __call__
+    return self.t(*a, **kw)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/debugerror.py", line 193, in __template__
+    </div>
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/webapi.py", line 364, in input
+    out = rawinput(_method)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/site-packages/web/webapi.py", line 341, in rawinput
+    a = cgi.FieldStorage(fp=fp, environ=e, keep_blank_values=1)
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/cgi.py", line 561, in __init__
+    self.read_single()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/cgi.py", line 740, in read_single
+    self.read_binary()
+  File "/Users/apple/anaconda3/envs/deep_learning_36/lib/python3.6/cgi.py", line 762, in read_binary
+    self.file.write(data)
+TypeError: write() argument must be str, not bytes
+http://0.0.0.0:8888/
+http://0.0.0.0:8888/
+http://0.0.0.0:8888/
+http://0.0.0.0:8888/
+http://0.0.0.0:8888/
+http://0.0.0.0:8888/
+http://0.0.0.0:8888/
+http://0.0.0.0:8888/
+http://0.0.0.0:8888/
+http://0.0.0.0:8888/
+http://0.0.0.0:8888/
+http://0.0.0.0:8888/

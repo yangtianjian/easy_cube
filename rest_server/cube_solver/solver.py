@@ -134,12 +134,12 @@ class Cube(object):
             return False
 
     @staticmethod
-    def from_json(json_):
+    def from_json(json_, check_valid=True):
         if isinstance(json_, str):
             json_ = json.loads(json_)
         arr_ = np.stack([np.array(json_[x]).reshape(3, 3) for x in ['D', 'R', 'B', 'U', 'L', 'F']], axis=0)
         cube = Cube(initial_color=arr_)
-        if not cube._check_valid_with_kociemba():
+        if check_valid and not cube._check_valid_with_kociemba():
             raise ValueError("The cube is not valid")
         return cube
 
@@ -741,7 +741,7 @@ class LBLSolver(CubeSolver):
         for i in range(4):
             if cube['F'][2][0] == self._face_map['U'] and cube['L'][2][2] == desire_l and \
                     cube['D'][0][0] == desire_f:
-                cube._push_back_record(shortcut('D', i), label='up_corner/{}/solution'.format(name_scope))
+                cube._push_back_record(shortcut('D', i), label='up_corner/{}/transition'.format(name_scope))
                 cube.rotate_sequence("DLD'L'", record='up_corner/{}/solution'.format(name_scope))
                 return True
             cube.rotate('D', record=False)
@@ -758,7 +758,7 @@ class LBLSolver(CubeSolver):
         for i in range(4):
             if cube['D'][0][0] == self._face_map['U'] and cube['L'][2][2] == desire_f and \
                     cube['F'][2][0] == desire_l:
-                cube._push_back_record(shortcut('D', i), label='up_corner/{}/solution'.format(name_scope))
+                cube._push_back_record(shortcut('D', i), label='up_corner/{}/transition'.format(name_scope))
                 cube.rotate_sequence("F'D'D'FD", record="up_corner/{}/solution".format(name_scope))
                 self._case7(cube, desire_f, desire_l, name_scope=name_scope + "_case_2")
                 return True
