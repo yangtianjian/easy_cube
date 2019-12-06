@@ -8,7 +8,19 @@ import random
 from tqdm import trange
 import os
 import pickle
+import sys, logging
+from wsgilog import WsgiLog
 
+class Log(WsgiLog):
+    def __init__(self, application):
+        WsgiLog.__init__(
+            self,
+            application,
+            logformat = '%(message)s',
+            tofile = True,
+            toprint = True,
+            file = './server.log',
+            interval='H')
 
 urls = (
     '/solve_lbl', 'SolveLBL',
@@ -48,8 +60,15 @@ def returns_json(func):
     def wrapper(obj, *args, **kwargs):
         web.header("Content-Type", "application/json;charset=UTF-8")
         data = json.loads(web.data())
-        return func(obj, data, *args, **kwargs)
+        if 'magic_number' not in data or data['magic_number'] != 'qwertyuiop':
+            return {
+                "success": False,
+                "message": "Please add magic number. Or check if magic number is correct."
+            }
+        else:
+            return func(obj, data, *args, **kwargs)
     return wrapper
+
 
 def get_case_apply_interval(program_number, case_number, op_label):
 
@@ -394,4 +413,4 @@ class Test():
 problem_cache = read_or_create_cache('./cube_solver/problems/problem_cache.pkl', create_problem_cache)
 if __name__ == '__main__':
     app = web.application(urls, globals())
-    app.run()
+    app.run(Log)
