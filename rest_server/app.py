@@ -58,7 +58,7 @@ np.random.seed(40)
 def returns_json(func):
     @functools.wraps(func)
     def wrapper(obj, *args, **kwargs):
-        web.header("Content-Type", "application/json;charset=UTF-8")
+        # web.header("Content-Type", "application/json;charset=UTF-8")
         data = json.loads(web.data())
         if 'magic_number' not in data or data['magic_number'] != 'qwertyuiop':
             return {
@@ -66,7 +66,7 @@ def returns_json(func):
                 "message": "Please add magic number. Or check if magic number is correct."
             }
         else:
-            return func(obj, data, *args, **kwargs)
+            return json.dumps(func(obj, data, *args, **kwargs))
     return wrapper
 
 
