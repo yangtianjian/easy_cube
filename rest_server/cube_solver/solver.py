@@ -3,7 +3,6 @@ from abc import ABCMeta, abstractmethod
 from collections import deque
 import kociemba
 import pycuber as pc
-from deprecated import deprecated
 from tqdm import tqdm, trange
 import json
 
@@ -20,20 +19,6 @@ def get_kociemba_face_map():
 
 def get_inv_kociemba_face_map():
     fm = get_kociemba_face_map()
-    return dict([(v, k) for k, v in fm.items()])
-
-def get_lbl_wrapper_face_map():
-    return {'U': 0, 'F': 1, 'B': 2, 'R': 3, 'L': 4, 'D': 5}
-
-def get_lbl_wrapper_color_map():
-    return {'U': 'w', 'F': 'r', 'L': 'g', 'R': 'b', 'B': 'o', 'D': 'y'}
-
-def get_inv_lbl_wrapper_color_map():
-    cm = get_lbl_wrapper_color_map()
-    return dict([(v, k) for k, v in cm.items()])
-
-def get_inv_lbl_wrapper_face_map():
-    fm = get_lbl_wrapper_face_map()
     return dict([(v, k) for k, v in fm.items()])
 
 def reverse_formula(formula_list):
@@ -98,10 +83,6 @@ class Cube(object):
     _face_rel, _nb = get_face_rel()
     _kociemba_face_map = get_kociemba_face_map()
     _inv_kociemba_face_map = get_inv_kociemba_face_map()
-    _lbl_face_map = get_lbl_wrapper_face_map()
-    _inv_lbl_face_map = get_inv_lbl_wrapper_face_map()
-    _lbl_color_map = get_lbl_wrapper_color_map()
-    _inv_lbl_color_map = get_inv_lbl_wrapper_color_map()
 
 
     def __init__(self, initial_color=None):
@@ -269,28 +250,6 @@ class Cube(object):
             colors = c2[self._face_map[self._inv_kociemba_face_map[i]], :]
             s += ''.join([self._inv_face_map[c] for c in colors])
         return s
-
-    @deprecated
-    def to_lbl_wrapper_compatible_string(self):
-        '''
-        It is for lbl solver. But this wrapper does not seem to work even in some simple cases. Therefore, I'll write the
-        rules for myself. In case of further reuse, it is kept.
-        :return: LBL solver-compatible string input.
-        '''
-        ans_str = ""
-        cr = self._c.reshape(6, 9)
-        for i in range(6):
-            face_name_in_cpp = self._inv_lbl_face_map[i]
-            face_idx_in_py = self._face_map[face_name_in_cpp]
-            if face_name_in_cpp == 'U':
-                perm = [5, 8, 7, 6, 3, 0, 1, 2, 4]
-            elif face_name_in_cpp == 'D':
-                perm = [5, 2, 1, 0, 3, 6, 7, 8, 4]
-            else:
-                perm = [2, 5, 8, 7, 6, 3, 0, 1, 4]
-            seq = "".join([self._lbl_color_map[self._inv_face_map[x]] for x in cr[face_idx_in_py][perm]])
-            ans_str += seq
-        return ans_str
 
     def copy(self):
         return self.__copy__()
