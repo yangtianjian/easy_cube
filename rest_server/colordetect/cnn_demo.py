@@ -1,13 +1,14 @@
 import os
 import numpy as np
 import cv2
-from colordetect.cnn_model import CNNDetectorInference, get_inverse_colormap, ConvolutionalDetector, Lenet5Module
+from colordetect.cnn_model import CNNDetectorInference, get_cnn_inverse_colormap, ConvolutionalDetector, Lenet5Module
 import torch
+from colordetect.prepare_data import img_ext_names, _list_file_with_ext
 
 if __name__ == '__main__':
-
-    test_files = [x for x in os.listdir('test') if x.lower().endswith('.jpeg') and not x.startswith('.')]
-    test_files = sorted([os.path.join('test', x) for x in test_files])
+    test_dir = './test2'
+    test_files = list(sorted(_list_file_with_ext(test_dir, img_ext_names)))
+    test_files = [os.path.join(test_dir, x) for x in test_files]
 
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     cnn_model = CNNDetectorInference('./models/best_model', device)
@@ -29,7 +30,7 @@ if __name__ == '__main__':
     #     print(predict)
         predicts.append(predict.tolist())
 
-    colormap_inv = get_inverse_colormap()
+    colormap_inv = get_cnn_inverse_colormap()
     print(test_files)
     for x in predicts:
         predict_color = [colormap_inv[y] for y in x]

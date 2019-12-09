@@ -29,12 +29,12 @@ def _create_preprocess_fn(d):
     return preprocess_fn
 
 
-def get_colormap():
+def get_cnn_colormap():
     return {'W': 0, 'R': 1, 'G': 2, 'Y': 3, 'O': 4, 'B': 5}
 
 
-def get_inverse_colormap():
-    return dict([(v, k) for (k, v) in get_colormap().items()])
+def get_cnn_inverse_colormap():
+    return dict([(v, k) for (k, v) in get_cnn_colormap().items()])
 
 
 class Lenet5Module(nn.Module):
@@ -239,7 +239,7 @@ class ConvolutionalDetector(BaseEstimator, TransformerMixin):
 
 
 def get_dataset_for_cnn(dim, preshuffle=True, limit=999999999):
-    colormap2 = get_colormap()
+    colormap2 = get_cnn_colormap()
     (X_img, y) = make_dataset(label_blocks, block_dir, preshuffle=preshuffle, limit=limit, preprocess_fn=_create_preprocess_fn(dim))
     X_img = np.stack(X_img, axis=0)
     y = np.array([colormap2[q['color']] for q in y])
