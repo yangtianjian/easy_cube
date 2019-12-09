@@ -10,6 +10,7 @@ import os
 import pickle
 import sys, logging
 from wsgilog import WsgiLog
+from colordetect.knn_detector import knn_predict
 
 class Log(WsgiLog):
     def __init__(self, application):
@@ -27,10 +28,13 @@ urls = (
     '/solve_koci', 'SolveKoci',
     '/recognize', 'RecognizeColor',
     '/generate', 'Generate',
+    '/random_generate', 'RandomGenerate',
     '/', "Test"
 )
 
 color_detector = CNNModel('./colordetect/models/best_model')
+
+# D: 0, R: 1, B: 2, U: 3, L: 4, F: 5
 _color_map = {
         'Y': 0,
         'B': 1,
@@ -54,6 +58,12 @@ problem_cache = {}  # cache[x][y][z]: the z-th sample of the y-th case in progra
 
 random.seed(40)
 np.random.seed(40)
+
+def get_app_color_map():
+    return _color_map
+
+def get_inv_app_color_map():
+    return dict([(v, k) for k, v in get_app_color_map()])
 
 def returns_json(func):
     @functools.wraps(func)
@@ -164,6 +174,32 @@ def read_or_create_cache(path, create_fn):
             cache_ = pickle.load(f)
         return cache_
 
+class RandomGenerate():
+
+    @returns_json
+    def POST(self, data):
+        '''
+
+        :param data:
+        :return: {
+            success: True,
+            message: "Success".
+            trans: []
+            cube: {
+                U: [],
+                L: [],
+                ...
+            }
+        }
+        '''
+        cube, seq = create_random_cube(return_op=True)
+        return {
+            "success": True,
+            "message": "Success",
+            "trans": seq,
+            "cube": cube.to_json_object()
+        }
+
 
 class SolveLBL():
 
@@ -271,7 +307,7 @@ class SolveKoci():
                 "solution": []
             }
 
-class RecognizeColor():
+class RecognizeColor_v2():
 
     @returns_json
     def POST(self, data):
@@ -315,6 +351,35 @@ class RecognizeColor():
             img_arr = np.stack(img_arr, axis=-1)
             colors = color_detector.predict(img_arr)
             face_colors[face] = [_color_map[x] for x in colors]
+        try:
+            cube = Cube.from_json(face_colors, check_valid=True)
+            formula = KociembaSolver(terminal=cube).solve(Cube())
+            return {
+                "success": True,
+                "message": "Success",
+                "cube": face_colors,
+                "trans": formula
+            }
+        except ValueError as e:
+            return {
+                "success": False,
+                "message": "The cube is invalid. Please check the cube.",
+                "cube": face_colors,
+                "trans": []
+            }
+
+class RecognizeColor():
+    @returns_json
+    def POST(self, data):
+        picture_json = data['picture']
+        w, h = picture_json['width'], picture_json['height']
+        for k in ['U', 'D', 'R', 'F', 'L', 'B']:
+            picture_data = []
+            for k2 in ['B', 'G', 'R']:
+                picture_data.append(np.array(picture_json[k][k2], dtype=np.uint8).reshape((h, w)))
+            picture_data = np.stack(picture_data, axis=-1)
+            picture_json[k] = picture_data
+        face_colors = knn_predict(picture_json)
         try:
             cube = Cube.from_json(face_colors, check_valid=True)
             formula = KociembaSolver(terminal=cube).solve(Cube())
