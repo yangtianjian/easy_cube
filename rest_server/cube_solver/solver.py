@@ -166,6 +166,20 @@ class Cube(object):
     def get_rotation_sequences(self):
         return [x for x in self._rec if x[0] in ['x', 'y', 'z']]
 
+    def _get_label_by_step(self, step_num):
+        for i in range(len(self._op_label)):
+            label, start, finish = self._op_label[i]
+            if start <= step_num <= finish:
+                return (label, start, finish)
+        raise RuntimeError("The step is not found")
+
+    def _inv(self, axis):
+        if len(axis) == 1:
+            return axis + "'"
+        else:
+            return axis[0]
+
+
     def get_mirroring_record(self):
 
         '''
@@ -189,10 +203,46 @@ class Cube(object):
         mirror_map = ['U', 'L', 'F', 'R', 'B', 'D']
         inv_mirror_map = dict((k, i) for i, k in enumerate(mirror_map))
         cur_mirror = np.arange(6)
+
+
+        orient_mirror = {"x": "x", "y": "y", "z": "z"}  # 魔方空间坐标对应了魔方面坐标的什么
+        def get_new_orient_map(old_map, op):
+            new_map = {}
+            if op == "x":
+                new_map["x"] = old_map["x"]
+                new_map["y"] = old_map["z"]
+                new_map["z"] = self._inv(old_map["y"])
+            if op == "x'":
+                new_map["x"] = old_map["x"]
+                new_map["y"] = self._inv(old_map["z"])
+                new_map["z"] = old_map["y"]
+            if op == "y":
+                new_map["x"] = self._inv(old_map["z"])
+                new_map["y"] = old_map["y"]
+                new_map["z"] = old_map["x"]
+            if op == "y'":
+                new_map["x"] = old_map["z"]
+                new_map["y"] = old_map["y"]
+                new_map["z"] = self._inv(old_map["x"])
+            if op == "z":
+                new_map["x"] = old_map["y"]
+                new_map["y"] = self._inv(old_map["x"])
+                new_map["z"] = old_map["z"]
+            if op == "z'":
+                new_map["x"] = self._inv(old_map["y"])
+                new_map["y"] = old_map["x"]
+                new_map["z"] = old_map["z"]
+            return new_map
+
         for r in self._rec:
             if r[0] in ['x', 'y', 'z']:
                 cur_mirror = mirror(cur_mirror, r)
-                ret.append(r)
+                if len(r) == 1:
+                    trans_r = orient_mirror[r]
+                else:
+                    trans_r = self._inv(orient_mirror[r[0]])
+                ret.append(trans_r)
+                orient_mirror = get_new_orient_map(orient_mirror, r)
             else:
                 trans_r = mirror_map[cur_mirror[inv_mirror_map[r[0]]]]
                 if len(r) > 1 and r[1] == "'":
@@ -1297,10 +1347,11 @@ def is_valid_cube(cube):
     return np.all(np.bincount(arr.reshape((-1, ))) == 9)
 
 
-def _create_step_ut(samples, seed, until_step, f_conditions):
+def _create_step_ut(samples, seed, until_step, f_conditions, log_file='test_log.txt'):
 
     np.random.seed(seed)
     def _ut_fn():
+        f = open(log_file, 'w')
         T = samples
         for i in trange(T):
             cube, steps = create_random_cube(return_op=True)
@@ -1311,6 +1362,13 @@ def _create_step_ut(samples, seed, until_step, f_conditions):
             try:
                 solver.solve(cube_c, inplace=True, steps=until_step)
                 rec = cube_c.get_record()
+                op_label = cube_c.get_op_label()
+                for p in range(len(op_label)):
+                    f.write("\t".join([str(i),
+                                      str(op_label[p][0]),
+                                      str(op_label[p][1]),
+                                      str(op_label[p][2])]) + "\n")
+                f.flush()
                 cube_f.rotate_or_view_sequence(rec, record=False)
                 for cond in f_conditions:
                     if not cond(cube_c):
@@ -1334,6 +1392,7 @@ def _create_step_ut(samples, seed, until_step, f_conditions):
                 print(" ".join(cube_c.get_record()))
                 raise e
                 break
+        f.close()
     return _ut_fn()
 
 def _ut_up_cross():
@@ -1360,7 +1419,7 @@ def _ut_bottom_corner2():
                                   Cube.is_down_cross_finished, Cube.is_down_corner_finished,
                                   Cube.is_down_corner2_finished])
 def _ut_all_solved():
-    _create_step_ut(100000, 42, 7, [Cube.is_all_solved])
+    _create_step_ut(10000, 42, 7, [Cube.is_all_solved])
 
 def _ut_basic_op():
     np.random.seed(43)
@@ -1390,6 +1449,8 @@ def one_demo():
         print("===============All done! The answer is: ==================")
         print(" ".join(cube.get_record()))
         print(cube.get_op_label())
+        print("===============Mirror record is: ==================")
+        print(" ".join(cube.get_mirroring_record()))
     else:
         print("==============Whoops!! Please Check!!!!!================")
 
@@ -1427,5 +1488,5 @@ def regression_test():
     # _ut_mirror()
 
 if __name__ == '__main__':
-    regression_test()
-    # one_demo()
+    # regression_test()
+    one_demo()
